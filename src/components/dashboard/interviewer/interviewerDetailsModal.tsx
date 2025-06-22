@@ -43,12 +43,12 @@ function InterviewerDetailsModal({ interviewer }: Props) {
               <h4 className="w-20 text-left">Empathy</h4>
               <div className="w-40 space-x-3 ml-3 flex justify-between items-center">
                 <Slider
-                  value={[(interviewer?.empathy || 10) / 10]}
+                  value={[(interviewer?.empathy ?? 0) / 10]}
                   max={1}
                   step={0.1}
                 />
                 <span className="w-8 text-left">
-                  {(interviewer?.empathy || 10) / 10}
+                  {interviewer?.empathy !== undefined ? interviewer.empathy / 10 : ""}
                 </span>
               </div>
             </div>
@@ -56,12 +56,12 @@ function InterviewerDetailsModal({ interviewer }: Props) {
               <h4 className="w-20 text-left">Rapport</h4>
               <div className="w-40 space-x-3 ml-3 flex justify-between items-center">
                 <Slider
-                  value={[(interviewer?.rapport || 10) / 10]}
+                  value={[(interviewer?.rapport ?? 0) / 10]}
                   max={1}
                   step={0.1}
                 />
                 <span className="w-8 text-left">
-                  {(interviewer?.rapport || 10) / 10}
+                  {interviewer?.rapport !== undefined ? interviewer.rapport / 10 : ""}
                 </span>
               </div>
             </div>
@@ -71,12 +71,12 @@ function InterviewerDetailsModal({ interviewer }: Props) {
               <h4 className="w-20 text-left">Exploration</h4>
               <div className="w-40 space-x-3 ml-3 flex justify-between items-center">
                 <Slider
-                  value={[(interviewer?.exploration || 10) / 10]}
+                  value={[(interviewer?.exploration ?? 0) / 10]}
                   max={1}
                   step={0.1}
                 />
                 <span className="w-8 text-left">
-                  {(interviewer?.exploration || 10) / 10}
+                  {interviewer?.exploration !== undefined ? interviewer.exploration / 10 : ""}
                 </span>
               </div>
             </div>
@@ -84,12 +84,12 @@ function InterviewerDetailsModal({ interviewer }: Props) {
               <h4 className="w-20 text-left">Speed</h4>
               <div className="w-40 space-x-3 ml-3 flex justify-between items-center">
                 <Slider
-                  value={[(interviewer?.speed || 10) / 10]}
+                  value={[(interviewer?.speed ?? 0) / 10]}
                   max={1}
                   step={0.1}
                 />
                 <span className="w-8 text-left">
-                  {(interviewer?.speed || 10) / 10}
+                  {interviewer?.speed !== undefined ? interviewer.speed / 10 : ""}
                 </span>
               </div>
             </div>

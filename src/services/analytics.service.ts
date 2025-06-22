@@ -65,6 +65,11 @@ export const generateInterviewAnalytics = async (payload: {
       (q: Question) => q.question,
     );
 
+    // Save analytics to the response record in the database
+    await ResponseService.updateResponse({
+      analytics: analyticsResponse,
+    }, callId);
+
     return { analytics: analyticsResponse, status: 200 };
   } catch (error) {
     console.error("Error in OpenAI request:", error);
