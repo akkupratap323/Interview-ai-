@@ -1,5 +1,5 @@
 services:
-  foloup:
+  Interview ai:
     build: .
     ports:
       - "${DOCKER_PORT:-3000}:3000"

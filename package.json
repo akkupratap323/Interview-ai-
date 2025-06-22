@@ -1,5 +1,5 @@
 {
-  "name": "foloup-app",
+  "name": "Interview ai-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -43,7 +43,7 @@
     "@types/md5": "^2.3.5",
     "@types/pdf-parse": "^1.1.4",
     "axios": "^1.6.7",
-    "class-variance-authority": "^0.7.0",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.0.0",
     "embla-carousel-react": "^8.0.0-rc22",
     "framer-motion": "^11.3.21",

@@ -8,15 +8,15 @@ import { Toaster } from "sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FoloUp",
+  title: "Interview ai",
   description: "AI powered Interviews",
   openGraph: {
-    title: "FoloUp",
+    title: "Interview ai",
     description: "AI-powered Interviews",
-    siteName: "FoloUp",
+    siteName: "Interview ai",
     images: [
       {
-        url: "/foloup.png",
+        url: "/Interview ai.png",
         width: 800,
         height: 600,
       },
