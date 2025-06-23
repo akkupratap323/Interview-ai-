@@ -1,130 +1,83 @@
-[![GitHub stars](https://img.shields.io/github/stars/InterviewAI/InterviewAI?style=social)](https://github.com/InterviewAI/InterviewAI/stargazers)
-![License](https://img.shields.io/github/license/interviewai/interviewai)
-[![Twitter Follow](https://img.shields.io/twitter/follow/SuveenE?style=social)](https://x.com/SuveenE)
+# Interview AI
 
-# Interview AI - AI-powered voice interviewer for hiring 💼
+Interview AI is a modern, AI-powered interview platform that helps organizations create, manage, and analyze interviews with intelligent insights. Built with Next.js, Supabase, and OpenRouter (OpenAI-compatible), it enables automated candidate evaluation, interviewer management, and advanced analytics for hiring teams.
 
-Interview AI is an open source platform for companies to conduct AI powered hiring interviews with their candidates.
+## Screenshots
 
-<img src="https://github.com/user-attachments/assets/fa92ade1-02ea-4332-b5ed-97056dea01c3" alt="Interview AI Logo" width="800">
+| ![Image 1](./public/image1.png) | ![Image 2](./public/image2.png) |
+|:------------------------------:|:------------------------------:|
+| ![Image 3](./public/image3.png) | ![Image 4](./public/image4.png) |
+| ![Image 5](./public/image5.png) | ![Image 6](./public/image6.png) |
+| ![Image 7](./public/image7.png) | ![Image 8](./public/image8.png) |
 
-<div style="display: flex; flex-direction: row; gap: 20px; margin: 20px 0;">
-  <picture>
-    <img src="https://github.com/user-attachments/assets/91adf737-6f62-4f48-ae68-58855bc38ccf" alt="Description 1" width="400" style="max-width: 100%;">
-  </picture>
-  <picture>
-    <img src="https://github.com/user-attachments/assets/91bbe5d5-1eff-4158-80d9-d98c2a53f59b" alt="Description 2" width="400" style="max-width: 100%;">
-  </picture>
-</div>
+## Features
 
-## Key Features
+- **AI-Powered Interviews:** Generate and conduct interviews with AI interviewers (e.g., Bob, Lisa) tailored to your needs.
+- **Custom Interview Creation:** Easily create interviews with custom questions, objectives, and durations.
+- **Candidate Response Analytics:** Get instant AI-generated analytics, including overall and communication scores, sentiment analysis, and more.
+- **Interviewer Management:** Add, view, and manage AI interviewers with detailed profiles and specialties.
+- **Dashboard & Insights:** Visualize candidate performance, interview stats, and key metrics with beautiful charts and tables.
+- **Modern UI:** Responsive, accessible, and visually appealing interface with hover-to-expand side menu and modals.
+- **Authentication & Organization:** Secure sign-in, organization management, and role-based access via Clerk.
+- **Dockerized & Cloud-Ready:** Easily deployable with Docker and compatible with cloud platforms.
 
-- **🎯 Interview Creation:** Instantly generate tailored interview questions from any job description.
-- **🔗 One-Click Sharing:** Generate and share unique interview links with candidates in seconds.
-- **🎙️ AI Voice Interviews:** Let our AI conduct natural, conversational interviews that adapt to candidate responses.
-- **📊 Smart Analysis:** Get detailed insights and scores for each interview response, powered by advanced AI.
-- **📈 Comprehensive Dashboard:** Track all candidate performances and overall stats.
+## Tech Stack
 
-Here's a [loom](https://www.loom.com/share/762fd7d12001490bbfdcf3fac37ff173?sid=9a5b2a5a-64df-4c4c-a0e7-fc9765691f81) of me explaining the app.
+- **Frontend:** Next.js 14, React, Tailwind CSS, Lucide Icons
+- **Backend:** Next.js API routes, Supabase (Postgres), OpenRouter (OpenAI-compatible API)
+- **Authentication:** Clerk
+- **Deployment:** Docker, Vercel, or any cloud provider
 
-## Initial Setup
+## Getting Started
 
-1. Clone the project.
+1. **Clone the repository:**
+   ```sh
+   git clone https://github.com/your-org/interview-ai.git
+   cd interview-ai
+   ```
+2. **Install dependencies:**
+   ```sh
+   yarn install
+   # or
+   npm install
+   ```
+3. **Set up environment variables:**
+   - Copy `.env.example` to `.env` and fill in your Supabase, Clerk, and OpenRouter API keys.
+4. **Run locally:**
+   ```sh
+   yarn dev
+   # or
+   npm run dev
+   ```
+5. **Build and run with Docker:**
+   ```sh
+   docker build -t interview-ai .
+   docker run -p 3000:3000 interview-ai
+   ```
 
-```bash
-git clone https://github.com/InterviewAI/InterviewAI.git
-```
+## Folder Structure
 
-2. Copy the existing environment template file
+- `src/app/` — Next.js app directory (pages, layouts, API routes)
+- `src/components/` — UI components (dashboard, interview, interviewer, modals, etc.)
+- `src/services/` — API and database service logic
+- `src/contexts/` — React context providers for state management
+- `src/types/` — TypeScript types
+- `public/` — Static assets (images, audio, icons)
 
-```bash
-cp .env.example .env
-```
+## Customization
 
-## Clerk Setup ([Clerk](https://clerk.com/))
-
-We use Clerk for authentication. Set up Clerk environment variables in the `.env` file. Free plan should be more than enough.
-
-1. Navigate to [Clerk](https://dashboard.clerk.com/) and create an application following the [setup guide](https://clerk.com/docs/quickstarts/setup-clerk).
-
-<img src="https://github.com/user-attachments/assets/faa72830-10b0-4dfd-8f07-792e7520b6a2" alt="Clerk Organization Settings" width="800">
-
-2. Your `.env` (NOT `.env.local`) file should have the `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` variables populated with **no inverted commas**
-
-3. Enable organizations in your Clerk application by navigating to the [Organization Settings](https://dashboard.clerk.com/last-active?path=organizations-settings&_gl=1*58xbvk*_gcl_au*MTEzODk3NzAyMy4xNzM4NjQzMzU3*_ga*MzUyMTk4NzIwLjE3Mzg2NDM0NzY.*_ga_1WMF5X234K*MTczODczNzkxOC4zLjEuMTczODczNzkyNi4wLjAuMA..) page.
-
-<img src="https://github.com/user-attachments/assets/381cd138-439a-4b4f-ae87-50414fb1d64b" alt="Clerk Organization Settings" width="800">
-
-4. Make sure you create an organization and invite your email to it.
-
-## Database Setup ([Supabase](https://supabase.com/))
-
-Supabase is used for storing the data. It's really simple to set up and the free plan should suffice.
-
-1. Create a project (Note down your project's password)
-2. Got to SQL Editor and copy the SQL code from `supabase_schema.sql`
-
-<img src="https://github.com/user-attachments/assets/a31c14b8-45ca-417c-8927-aceb36fa5990" alt="Supabase SQL Editor" height="200">
-
-3. Run the SQL code to confirm the tables are created.
-4. Copy the supabase url and anon key from the project settings and paste it in the `.env` file in `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-
-## Retell AI Setup ([Retell AI](https://retell.ai/))
-
-We use Retell AI to manage all the voice calls. They manage storage of recordings and provide a simple SDK to integrate with. They provide free credits to start with and will have to pay as you go.
-
-1. Create an API key from [Retell AI Dashboard](https://dashboard.retellai.com/apiKey) and add it to the `.env` file in `RETELL_API_KEY`
-
-## Add OpenAI API Key
-
-We use OpenAI to generate questions for interviews and analyze responses. This would not be that costly.
-
-1. Go to [OpenAI](https://platform.openai.com/api-keys) and create an API key
-2. Add the API key to the `.env` file in `OPENAI_API_KEY`
-
-## Getting Started locally
-
-First install the packages:
-
-```bash
-yarn
-```
-
-Run the development server:
-
-```bash
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## Self Hosting
-
-We recommend using [Vercel](https://vercel.com/) to host the app.
+- **Add Interviewers:** Use the dashboard to add new AI interviewers with custom images, audio, and specialties.
+- **Edit Interview Flows:** Modify `src/components/dashboard/interview/createInterviewModal.tsx` and related files for custom interview creation steps.
+- **Update Analytics:** Adjust AI analytics prompts in `src/lib/prompts/analytics.ts` to change how scores and insights are generated.
 
 ## Contributing
 
-If you'd like to contribute to Interview AI, feel free to fork the repository, make your changes, and submit a pull request. Contributions are welcomed and appreciated.
-
-For a detailed guide on contributing, read the [CONTRIBUTING.md](CONTRIBUTING.md) file.
-
-## Show Your Support 🌟
-
-If you find Interview AI helpful, please consider giving us a star on GitHub! It helps us reach more developers and continue improving the project.
-
-## Products built on top of Interview AI 🚀
-
-<div align="left">
-  <a href="https://talvin.ai/" target="_blank">
-    <img src="https://pbs.twimg.com/profile_images/1910041959508422656/OEnXp-kO_400x400.jpg" alt="Talvin AI Logo" height="100" style="border-radius: 20%;">
-    <p>Talvin AI</p>
-  </a>
-</div>
-
-## Contact
-
-If you have any questions or feedback, please feel free to reach out to us at [suveen.te1[at]gmail.com](mailto:suveen.te1@gmail.com).
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-The software code is licensed under the MIT License.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+**Interview AI** — Revolutionize your hiring process with AI-driven interviews and analytics.
