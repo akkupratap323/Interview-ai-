@@ -830,13 +830,13 @@ function Call({ interview }: InterviewProps) {
         {(!isStarted || isEnded) && (
           <div className="text-center mt-8">
             <a
-              href="https://folo-up.co/"
+              href="https://Interview-up.co/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors duration-300"
             >
               <span className="text-sm font-medium">
-                Powered by <span className="font-bold">Folo<span className="text-indigo-600">Up</span></span>
+                Powered by <span className="font-bold">Interview<span className="text-indigo-600">Up</span></span>
               </span>
               <ArrowUpRightSquareIcon className="w-4 h-4" />
             </a>

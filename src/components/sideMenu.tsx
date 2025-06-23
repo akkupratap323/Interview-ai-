@@ -54,34 +54,11 @@ function SideMenu() {
       description: "AI interviewer profiles",
       color: "text-purple-600"
     },
-    {
-      icon: BarChart3,
-      label: "Analytics",
-      path: "/dashboard/analytics",
-      isActive: pathname.endsWith("/analytics"),
-      description: "Performance insights",
-      badge: "New",
-      color: "text-emerald-600"
-    },
-    {
-      icon: Users,
-      label: "Responses",
-      path: "/dashboard/responses",
-      isActive: pathname.endsWith("/responses"),
-      description: "Interview responses",
-      color: "text-orange-600"
-    }
+  
   ];
 
   const secondaryItems: MenuItemProps[] = [
-    {
-      icon: Settings,
-      label: "Settings",
-      path: "/dashboard/settings",
-      isActive: pathname.endsWith("/settings"),
-      description: "Platform configuration",
-      color: "text-gray-600"
-    },
+
     {
       icon: HelpCircle,
       label: "Help & Support",
