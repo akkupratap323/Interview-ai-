@@ -21,12 +21,22 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
+interface MenuItemProps {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  path: string;
+  isActive: boolean;
+  description: string;
+  badge?: string;
+  color: string;
+}
+
 function SideMenu() {
   const pathname = usePathname();
   const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
 
-  const menuItems = [
+  const menuItems: MenuItemProps[] = [
     {
       icon: PlayCircle,
       label: "Interviews",
@@ -63,7 +73,7 @@ function SideMenu() {
     }
   ];
 
-  const secondaryItems = [
+  const secondaryItems: MenuItemProps[] = [
     {
       icon: Settings,
       label: "Settings",
@@ -82,7 +92,15 @@ function SideMenu() {
     }
   ];
 
-  const MenuItem = ({ icon: Icon, label, path, isActive, description, badge, color }) => (
+  const MenuItem: React.FC<MenuItemProps> = ({ 
+    icon: Icon, 
+    label, 
+    path, 
+    isActive, 
+    description, 
+    badge, 
+    color 
+  }) => (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
