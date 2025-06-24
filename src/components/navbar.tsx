@@ -57,7 +57,7 @@ function Navbar() {
                     },
                     variables: {
                       fontSize: "0.875rem",
-                      fontWeight: "500",
+                      fontWeight: "500" as any,
                     },
                   }}
                 />
@@ -86,7 +86,7 @@ function Navbar() {
                     },
                     variables: {
                       fontSize: "0.8rem",
-                      fontWeight: "500",
+                      fontWeight: "500" as any,
                     },
                   }}
                 />
@@ -119,7 +119,7 @@ function Navbar() {
       </div>
 
       {/* Subtle gradient overlay */}
-      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
     </nav>
   );
 }

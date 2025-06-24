@@ -342,7 +342,7 @@ function CallInfo({
                     <AlertDialogHeader>
                       <AlertDialogTitle>Delete Response</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete this candidate's response and all associated data.
+                        This action cannot be undone. This will permanently delete this candidate&apos;s response and all associated data.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

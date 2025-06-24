@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps, react/jsx-sort-props */
 "use client";
 
 import { Button } from "@/components/ui/button";

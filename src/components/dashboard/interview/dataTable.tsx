@@ -18,11 +18,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  ArrowUpDown, 
-  ExternalLink, 
-  Trophy, 
-  MessageSquare, 
+import {
+  ArrowUpDown,
+  ExternalLink,
+  Trophy,
+  MessageSquare,
   User,
   TrendingUp,
   TrendingDown,
@@ -30,7 +30,7 @@ import {
   Eye,
   Star,
   Award,
-  BarChart3
+  BarChart3,
 } from "lucide-react";
 import {
   Tooltip,
@@ -113,7 +113,9 @@ function DataTable({ data, interviewId }: DataTableProps) {
           <Button
             variant="ghost"
             className={`w-full justify-start font-semibold text-sm hover:bg-indigo-50 transition-colors ${
-              column.getIsSorted() ? "text-indigo-600 bg-indigo-50" : "text-gray-700 hover:text-indigo-600"
+              column.getIsSorted()
+                ? "text-indigo-600 bg-indigo-50"
+                : "text-gray-700 hover:text-indigo-600"
             }`}
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
@@ -129,9 +131,9 @@ function DataTable({ data, interviewId }: DataTableProps) {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  variant="ghost"
-                  size="sm"
                   className="h-8 w-8 p-0 hover:bg-indigo-100 hover:text-indigo-600 transition-colors"
+                  size="sm"
+                  variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation();
                     window.open(
@@ -151,7 +153,7 @@ function DataTable({ data, interviewId }: DataTableProps) {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          
+
           <div className="flex flex-col">
             <span className="font-medium text-gray-900 truncate max-w-[200px]">
               {row.getValue("name") || "Anonymous Candidate"}
@@ -175,7 +177,9 @@ function DataTable({ data, interviewId }: DataTableProps) {
           <Button
             variant="ghost"
             className={`w-full justify-start font-semibold text-sm hover:bg-indigo-50 transition-colors ${
-              column.getIsSorted() ? "text-indigo-600 bg-indigo-50" : "text-gray-700 hover:text-indigo-600"
+              column.getIsSorted()
+                ? "text-indigo-600 bg-indigo-50"
+                : "text-gray-700 hover:text-indigo-600"
             }`}
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
@@ -191,7 +195,7 @@ function DataTable({ data, interviewId }: DataTableProps) {
           <div className="flex items-center justify-center min-h-[3rem]">
             {score ? (
               <div className="flex items-center gap-2">
-                <Badge 
+                <Badge
                   variant={getScoreBadgeVariant(score)}
                   className="flex items-center gap-1 px-3 py-1"
                 >
@@ -203,8 +207,8 @@ function DataTable({ data, interviewId }: DataTableProps) {
                     <Star
                       key={i}
                       className={`w-3 h-3 ${
-                        i < Math.floor(score / 2) 
-                          ? "text-yellow-400 fill-current" 
+                        i < Math.floor(score / 2)
+                          ? "text-yellow-400 fill-current"
                           : "text-gray-300"
                       }`}
                     />
@@ -233,7 +237,9 @@ function DataTable({ data, interviewId }: DataTableProps) {
           <Button
             variant="ghost"
             className={`w-full justify-start font-semibold text-sm hover:bg-indigo-50 transition-colors ${
-              column.getIsSorted() ? "text-indigo-600 bg-indigo-50" : "text-gray-700 hover:text-indigo-600"
+              column.getIsSorted()
+                ? "text-indigo-600 bg-indigo-50"
+                : "text-gray-700 hover:text-indigo-600"
             }`}
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
@@ -249,7 +255,7 @@ function DataTable({ data, interviewId }: DataTableProps) {
           <div className="flex items-center justify-center min-h-[3rem]">
             {score ? (
               <div className="flex flex-col items-center gap-1">
-                <Badge 
+                <Badge
                   variant={getScoreBadgeVariant(score)}
                   className="flex items-center gap-1"
                 >
@@ -257,11 +263,15 @@ function DataTable({ data, interviewId }: DataTableProps) {
                   <span className="font-semibold">{score.toFixed(1)}</span>
                 </Badge>
                 <div className="w-16 bg-gray-200 rounded-full h-1.5">
-                  <div 
+                  <div
                     className={`h-1.5 rounded-full transition-all duration-300 ${
-                      score >= 8 ? "bg-emerald-500" :
-                      score >= 6 ? "bg-blue-500" :
-                      score >= 4 ? "bg-amber-500" : "bg-red-500"
+                      score >= 8
+                        ? "bg-emerald-500"
+                        : score >= 6
+                        ? "bg-blue-500"
+                        : score >= 4
+                        ? "bg-amber-500"
+                        : "bg-red-500"
                     }`}
                     style={{ width: `${(score / 10) * 100}%` }}
                   />
@@ -296,26 +306,30 @@ function DataTable({ data, interviewId }: DataTableProps) {
 
         return (
           <div className="py-2 px-2">
-            <div className={`
+            <div
+              className={`
               relative overflow-hidden transition-all duration-500 ease-in-out
               ${isExpanded ? "max-h-[500px]" : "max-h-[4rem]"}
-            `}>
-              <p className={`
+            `}
+            >
+              <p
+                className={`
                 text-sm text-gray-700 leading-relaxed
                 ${!isExpanded ? "line-clamp-3" : ""}
-              `}>
+              `}
+              >
                 {summary || "No summary available"}
               </p>
-              
+
               {!isExpanded && summary && summary.length > 150 && (
                 <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white to-transparent" />
               )}
             </div>
-            
+
             {summary && summary.length > 150 && (
               <div className="mt-2 flex justify-end">
-                <Badge 
-                  variant="outline" 
+                <Badge
+                  variant="outline"
                   className="text-xs text-indigo-600 border-indigo-200 hover:bg-indigo-50 cursor-pointer"
                 >
                   {isExpanded ? "Hover to collapse" : "Hover to expand"}
@@ -348,7 +362,8 @@ function DataTable({ data, interviewId }: DataTableProps) {
             No candidate data available
           </h3>
           <p className="text-gray-600 text-center max-w-md">
-            Once candidates complete their interviews, their performance data will appear here.
+            Once candidates complete their interviews, their performance data will
+            appear here.
           </p>
         </CardContent>
       </Card>
@@ -370,34 +385,48 @@ function DataTable({ data, interviewId }: DataTableProps) {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="border-0 shadow-sm bg-gradient-to-r from-emerald-50 to-green-50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-emerald-600">Avg Overall Score</p>
+                <p className="text-sm font-medium text-emerald-600">
+                  Avg Overall Score
+                </p>
                 <p className="text-2xl font-bold text-emerald-900">
-                  {data.filter(d => d.overallScore).length > 0 
-                    ? (data.reduce((sum, d) => sum + (d.overallScore || 0), 0) / data.filter(d => d.overallScore).length).toFixed(1)
-                    : "N/A"
-                  }
+                  {data.filter((d) => d.overallScore).length > 0
+                    ? (
+                        data.reduce(
+                          (sum, d) => sum + (d.overallScore || 0),
+                          0,
+                        ) /
+                        data.filter((d) => d.overallScore).length
+                      ).toFixed(1)
+                    : "N/A"}
                 </p>
               </div>
               <Award className="w-8 h-8 text-emerald-500" />
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="border-0 shadow-sm bg-gradient-to-r from-purple-50 to-pink-50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-purple-600">Avg Communication</p>
+                <p className="text-sm font-medium text-purple-600">
+                  Avg Communication
+                </p>
                 <p className="text-2xl font-bold text-purple-900">
-                  {data.filter(d => d.communicationScore).length > 0 
-                    ? (data.reduce((sum, d) => sum + (d.communicationScore || 0), 0) / data.filter(d => d.communicationScore).length).toFixed(1)
-                    : "N/A"
-                  }
+                  {data.filter((d) => d.communicationScore).length > 0
+                    ? (
+                        data.reduce(
+                          (sum, d) => sum + (d.communicationScore || 0),
+                          0,
+                        ) /
+                        data.filter((d) => d.communicationScore).length
+                      ).toFixed(1)
+                    : "N/A"}
                 </p>
               </div>
               <MessageSquare className="w-8 h-8 text-purple-500" />
@@ -415,8 +444,8 @@ function DataTable({ data, interviewId }: DataTableProps) {
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id} className="border-b border-gray-200">
                     {headerGroup.headers.map((header) => (
-                      <TableHead 
-                        key={header.id} 
+                      <TableHead
+                        key={header.id}
                         className="text-left py-4 px-6 font-semibold text-gray-700"
                       >
                         {header.isPlaceholder

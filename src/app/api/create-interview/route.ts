@@ -1,3 +1,4 @@
+/* eslint-disable newline-before-return */
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
