@@ -949,6 +949,11 @@
     "@napi-rs/canvas-linux-x64-musl" "0.1.68"
     "@napi-rs/canvas-win32-x64-msvc" "0.1.68"
 
+"@netlify/plugin-nextjs@^5.11.3":
+  version "5.11.3"
+  resolved "https://registry.npmjs.org/@netlify/plugin-nextjs/-/plugin-nextjs-5.11.3.tgz"
+  integrity sha512-SCF2UPT+mDrfO3DDeUb7eTRqHycBEx4aJ8vACm17Nyn2b2ueaLlS5u/2V42SSZF/F6LydI7R78fv3xPW7HHdWw==
+
 "@next/env@14.2.24":
   version "14.2.24"
   resolved "https://registry.npmjs.org/@next/env/-/env-14.2.24.tgz"
