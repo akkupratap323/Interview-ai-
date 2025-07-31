@@ -5,6 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { InterviewService } from "@/services/interviews.service";
 import { logger } from "@/lib/logger";
 import { db } from "@/lib/db";
+import { PrismaClient } from "@prisma/client";
 
 export const maxDuration = 60;
 
@@ -34,7 +35,7 @@ export async function POST(req: Request, res: Response) {
 
     // ✅ Ensure user and organization exist in database using transaction
     try {
-      await db.$transaction(async (tx) => {
+      await db.$transaction(async (tx: Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends">) => {
         // First, check if organization exists and create if not (MUST be done before creating user)
         if (organizationId) {
           const existingOrg = await tx.organization.findUnique({
