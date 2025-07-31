@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const { userId, orgId } = auth();
@@ -48,21 +51,21 @@ export async function GET() {
       allInterviews: allInterviews.length,
       userInterviews: userInterviews.length,
       orgInterviews: orgInterviews.length,
-      allInterviewsData: allInterviews.map((i) => ({
+      allInterviewsData: allInterviews.map((i: any) => ({
         id: i.id,
         name: i.name,
         user_id: i.user_id,
         organization_id: i.organization_id,
         created: i.createdAt,
       })),
-      userInterviewsData: userInterviews.map((i) => ({
+      userInterviewsData: userInterviews.map((i: any) => ({
         id: i.id,
         name: i.name,
         user_id: i.user_id,
         organization_id: i.organization_id,
         created: i.createdAt,
       })),
-      orgInterviewsData: orgInterviews.map((i) => ({
+      orgInterviewsData: orgInterviews.map((i: any) => ({
         id: i.id,
         name: i.name,
         user_id: i.user_id,

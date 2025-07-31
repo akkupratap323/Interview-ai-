@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { ResponseService } from "@/services/responses.service";
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -22,7 +25,7 @@ export async function GET(request: Request) {
 
     console.log("🔍 DEBUG RESPONSES - Found responses:", responses.length);
 
-    const responseData = responses.map((response) => ({
+    const responseData = responses.map((response: any) => ({
       id: response.id,
       call_id: response.call_id,
       name: response.name,
