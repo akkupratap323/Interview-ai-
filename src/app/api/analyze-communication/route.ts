@@ -28,8 +28,9 @@ export async function POST(req: Request) {
       maxRetries: 5,
       dangerouslyAllowBrowser: true,
       defaultHeaders: {
-        'HTTP-Referer': process.env.NEXT_PUBLIC_LIVE_URL || 'http://localhost:3000',
-        'X-Title': 'AI Interview Platform',
+        "HTTP-Referer":
+          process.env.NEXT_PUBLIC_LIVE_URL || "http://localhost:3000",
+        "X-Title": "AI Interview Platform",
       },
     });
 
@@ -63,7 +64,10 @@ export async function POST(req: Request) {
     // Handle specific error types
     if (error.status === 402) {
       return NextResponse.json(
-        { error: "Insufficient credits. Please add more credits to your OpenRouter account." },
+        {
+          error:
+            "Insufficient credits. Please add more credits to your OpenRouter account.",
+        },
         { status: 402 },
       );
     }
@@ -76,9 +80,10 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(
-      { 
+      {
         error: "Failed to analyze communication skills",
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details:
+          process.env.NODE_ENV === "development" ? error.message : undefined,
       },
       { status: 500 },
     );

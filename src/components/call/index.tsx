@@ -9,7 +9,7 @@ import {
   User,
   AlertTriangle,
   CheckCircle2,
-  MessageSquare
+  MessageSquare,
 } from "lucide-react";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
@@ -69,10 +69,17 @@ type transcriptType = {
 function Call({ interview }: InterviewProps) {
   console.log("🎙️ Call component - Received interview:", interview);
   console.log("🎙️ Call component - Interview questions:", interview?.questions);
-  console.log("🎙️ Call component - Questions type:", typeof interview?.questions);
-  console.log("🎙️ Call component - Questions is array:", Array.isArray(interview?.questions));
+  console.log(
+    "🎙️ Call component - Questions type:",
+    typeof interview?.questions,
+  );
+  console.log(
+    "🎙️ Call component - Questions is array:",
+    Array.isArray(interview?.questions),
+  );
   const { createResponse } = useResponses();
-  const [lastInterviewerResponse, setLastInterviewerResponse] = useState<string>("");
+  const [lastInterviewerResponse, setLastInterviewerResponse] =
+    useState<string>("");
   const [lastUserResponse, setLastUserResponse] = useState<string>("");
   const [activeTurn, setActiveTurn] = useState<string>("");
   const [Loading, setLoading] = useState(false);
@@ -91,22 +98,25 @@ function Call({ interview }: InterviewProps) {
   const [insights, setInsights] = useState<any>(null);
   const [isGeneratingInsights, setIsGeneratingInsights] = useState(false);
   const [insightsError, setInsightsError] = useState<string | null>(null);
-  const [interviewTimeDuration, setInterviewTimeDuration] = useState<string>("1");
+  const [interviewTimeDuration, setInterviewTimeDuration] =
+    useState<string>("1");
   const [time, setTime] = useState(0);
   const [currentTimeDuration, setCurrentTimeDuration] = useState<string>("0");
 
   const lastUserResponseRef = useRef<HTMLDivElement | null>(null);
-  const handleFeedbackSubmit = async (formData: Omit<FeedbackData, "interview_id">) => {
+  const handleFeedbackSubmit = async (
+    formData: Omit<FeedbackData, "interview_id">,
+  ) => {
     try {
       console.log("🎯 Submitting feedback with data:", {
         ...formData,
         interview_id: interview.id,
       });
-      
-      const response = await fetch('/api/submit-feedback', {
-        method: 'POST',
+
+      const response = await fetch("/api/submit-feedback", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...formData,
@@ -123,18 +133,23 @@ function Call({ interview }: InterviewProps) {
         setIsDialogOpen(false);
       } else {
         console.error("🎯 Feedback submission failed:", result);
-        toast.error(result.error || "Failed to submit feedback. Please try again.");
+        toast.error(
+          result.error || "Failed to submit feedback. Please try again.",
+        );
       }
     } catch (error) {
       console.error("🎯 Error submitting feedback:", error);
-      toast.error(`An error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      toast.error(
+        `An error occurred: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   };
 
   // Keep all existing useEffect hooks unchanged
   useEffect(() => {
     if (lastUserResponseRef.current) {
-      lastUserResponseRef.current.scrollTop = lastUserResponseRef.current.scrollHeight;
+      lastUserResponseRef.current.scrollTop =
+        lastUserResponseRef.current.scrollHeight;
     }
   }, [lastUserResponse]);
 
@@ -157,25 +172,25 @@ function Call({ interview }: InterviewProps) {
     console.log("🧠 Generating insights for interview:", interview.id);
     setIsGeneratingInsights(true);
     setInsightsError(null);
-    
+
     try {
-      const response = await fetch('/api/generate-insights', {
-        method: 'POST',
+      const response = await fetch("/api/generate-insights", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          interviewId: interview.id
-        })
+          interviewId: interview.id,
+        }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to generate insights: ${response.status}`);
       }
-      
+
       const data = await response.json();
       console.log("🧠 Insights generated:", data);
-      
+
       if (data.response) {
         const parsedInsights = JSON.parse(data.response);
         setInsights(parsedInsights.insights);
@@ -266,28 +281,29 @@ function Call({ interview }: InterviewProps) {
   const startConversation = async () => {
     console.log("🎙️ Starting conversation - interview data:", interview);
     console.log("🎙️ Starting conversation - questions:", interview?.questions);
-    
+
     const data = {
       mins: interview?.time_duration || "10",
       objective: interview?.objective || "General interview",
-      questions: interview?.questions && Array.isArray(interview.questions) 
-        ? interview.questions.map((q) => q.question).join(", ")
-        : "No questions available",
+      questions:
+        interview?.questions && Array.isArray(interview.questions)
+          ? interview.questions.map((q) => q.question).join(", ")
+          : "No questions available",
       name: name || "not provided",
     };
-    
+
     console.log("🎙️ Starting conversation - prepared data:", data);
     setLoading(true);
 
     console.log("🎙️ Checking user eligibility - email:", email);
-    
+
     let OldUser = false;
-    
+
     try {
-      const eligibilityResponse = await fetch('/api/check-email-eligibility', {
-        method: 'POST',
+      const eligibilityResponse = await fetch("/api/check-email-eligibility", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           interviewId: interview.id,
@@ -299,14 +315,16 @@ function Call({ interview }: InterviewProps) {
       console.log("🎙️ Eligibility check result:", eligibilityResult);
 
       // DEVELOPMENT MODE: Skip validation for testing
-      const isDevelopment = process.env.NODE_ENV === 'development';
+      const isDevelopment = process.env.NODE_ENV === "development";
       console.log("🎙️ Development mode:", isDevelopment);
-      
-      OldUser = !isDevelopment && (
-        eligibilityResult.isOldUser ||
-        (interview?.respondents && Array.isArray(interview.respondents) && !interview.respondents.includes(email))
-      );
-      
+
+      OldUser =
+        !isDevelopment &&
+        (eligibilityResult.isOldUser ||
+          (interview?.respondents &&
+            Array.isArray(interview.respondents) &&
+            !interview.respondents.includes(email)));
+
       console.log("🎙️ User validation result - OldUser:", OldUser);
     } catch (error) {
       console.error("🎙️ Error checking eligibility:", error);
@@ -343,19 +361,24 @@ function Call({ interview }: InterviewProps) {
           name: name,
         };
         console.log("💾 Response payload:", responsePayload);
-        
+
         const responseId = await createResponse(responsePayload);
-        
+
         if (responseId) {
           console.log("💾 Response created successfully with ID:", responseId);
         } else {
           console.error("💾 CRITICAL: Failed to create response record!");
           console.error("💾 This will cause issues when the interview ends!");
-          console.error("💾 Call ID:", registerCallResponse.data.registerCallResponse.call_id);
+          console.error(
+            "💾 Call ID:",
+            registerCallResponse.data.registerCallResponse.call_id,
+          );
           console.error("💾 Interview ID:", interview.id);
-          
+
           // Show user warning but continue with interview
-          toast.error("Warning: Response recording may have issues. Please contact support if problems persist.");
+          toast.error(
+            "Warning: Response recording may have issues. Please contact support if problems persist.",
+          );
         }
       } else {
         console.log("Failed to register call");
@@ -374,9 +397,9 @@ function Call({ interview }: InterviewProps) {
   useEffect(() => {
     const fetchInterviewer = async () => {
       const interviewer = await InterviewerService.getInterviewer(
-        String(interview.interviewer_id || ''),
+        String(interview.interviewer_id || ""),
       );
-      setInterviewerImg(interviewer?.image || '');
+      setInterviewerImg(interviewer?.image || "");
     };
     fetchInterviewer();
   }, [interview.interviewer_id]);
@@ -386,11 +409,11 @@ function Call({ interview }: InterviewProps) {
       const updateInterview = async () => {
         try {
           console.log("📝 Updating response as ended for call:", callId);
-          
-          const response = await fetch('/api/update-response', {
-            method: 'POST',
+
+          const response = await fetch("/api/update-response", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
               callId: callId,
@@ -404,10 +427,12 @@ function Call({ interview }: InterviewProps) {
 
           if (!response.ok) {
             if (response.status === 404) {
-              console.warn("📝 Response record not found during update - this suggests response creation failed during interview start");
+              console.warn(
+                "📝 Response record not found during update - this suggests response creation failed during interview start",
+              );
               console.warn("📝 Call ID:", callId);
               console.warn("📝 Interview ID:", interview.id);
-              
+
               // Don't show error to user for 404 as it's an expected scenario
             } else {
               console.error("📝 Failed to update response:", result);
@@ -429,7 +454,7 @@ function Call({ interview }: InterviewProps) {
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
   const getProgressPercentage = () => {
@@ -442,13 +467,15 @@ function Call({ interview }: InterviewProps) {
   return (
     <div className="min-h-screen bg-white">
       {isStarted && <TabSwitchWarning />}
-      
+
       <div className="container mx-auto px-4 py-6 max-w-4xl">
         {/* Header - Only show when not in active interview */}
         {(!isStarted || isEnded) && (
           <div className="text-center mb-6">
             <div className="mb-4">
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">{interview?.name}</h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                {interview?.name}
+              </h1>
               <p className="text-gray-600">AI Interview</p>
             </div>
 
@@ -457,8 +484,8 @@ function Call({ interview }: InterviewProps) {
                 <div className="flex justify-center text-sm text-gray-600 mb-2">
                   <span>Duration: {interviewTimeDuration} mins</span>
                 </div>
-                <Progress 
-                  value={getProgressPercentage()} 
+                <Progress
+                  value={getProgressPercentage()}
                   className="h-2 bg-gray-200"
                 />
               </div>
@@ -475,8 +502,10 @@ function Call({ interview }: InterviewProps) {
                 <div className="space-y-6">
                   {/* Welcome Section */}
                   <div className="text-center space-y-3">
-                    <h2 className="text-xl font-semibold text-gray-900">Ready to Begin?</h2>
-                    
+                    <h2 className="text-xl font-semibold text-gray-900">
+                      Ready to Begin?
+                    </h2>
+
                     {interview?.description && (
                       <div className="p-4 bg-gray-50 rounded-lg border">
                         <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line">
@@ -490,17 +519,23 @@ function Call({ interview }: InterviewProps) {
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                       <Volume2 className="w-5 h-5 text-gray-600" />
-                      <span className="text-sm text-gray-700">Ensure microphone access is granted</span>
+                      <span className="text-sm text-gray-700">
+                        Ensure microphone access is granted
+                      </span>
                     </div>
-                    
+
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                       <Shield className="w-5 h-5 text-gray-600" />
-                      <span className="text-sm text-gray-700">Find a quiet environment</span>
+                      <span className="text-sm text-gray-700">
+                        Find a quiet environment
+                      </span>
                     </div>
-                    
+
                     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                       <AlertTriangle className="w-5 h-5 text-gray-600" />
-                      <span className="text-sm text-gray-700">Stay focused - tab switching is monitored</span>
+                      <span className="text-sm text-gray-700">
+                        Stay focused - tab switching is monitored
+                      </span>
                     </div>
                   </div>
 
@@ -508,12 +543,17 @@ function Call({ interview }: InterviewProps) {
                   {!interview?.is_anonymous && (
                     <div className="space-y-4">
                       <div className="text-center">
-                        <h3 className="text-base font-medium text-gray-900 mb-1">Your Details</h3>
+                        <h3 className="text-base font-medium text-gray-900 mb-1">
+                          Your Details
+                        </h3>
                       </div>
-                      
+
                       <div className="space-y-3">
                         <div>
-                          <Label htmlFor="email" className="text-sm text-gray-700">
+                          <Label
+                            htmlFor="email"
+                            className="text-sm text-gray-700"
+                          >
                             Email Address *
                           </Label>
                           <Input
@@ -525,9 +565,12 @@ function Call({ interview }: InterviewProps) {
                             className="mt-1 border-gray-300 focus:border-gray-500"
                           />
                         </div>
-                        
+
                         <div>
-                          <Label htmlFor="name" className="text-sm text-gray-700">
+                          <Label
+                            htmlFor="name"
+                            className="text-sm text-gray-700"
+                          >
                             First Name *
                           </Label>
                           <Input
@@ -547,7 +590,10 @@ function Call({ interview }: InterviewProps) {
                   <div className="flex gap-3">
                     <Button
                       onClick={startConversation}
-                      disabled={Loading || (!interview?.is_anonymous && (!isValidEmail || !name))}
+                      disabled={
+                        Loading ||
+                        (!interview?.is_anonymous && (!isValidEmail || !name))
+                      }
                       className="flex-1 bg-black hover:bg-gray-800 text-white"
                     >
                       {Loading ? (
@@ -577,7 +623,8 @@ function Call({ interview }: InterviewProps) {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Exit Interview?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to exit? You won't be able to restart this interview.
+                            Are you sure you want to exit? You won't be able to
+                            restart this interview.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -605,17 +652,20 @@ function Call({ interview }: InterviewProps) {
                 <div className="flex items-center justify-between max-w-4xl mx-auto">
                   <div className="flex items-center gap-3">
                     <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                    <span className="font-medium text-gray-900">{interview?.name}</span>
+                    <span className="font-medium text-gray-900">
+                      {interview?.name}
+                    </span>
                   </div>
 
                   <div className="flex items-center gap-4">
                     <span className="text-sm text-gray-600">
-                      {formatTime(Number(currentTimeDuration))} / {formatTime(Number(interviewTimeDuration) * 60)}
+                      {formatTime(Number(currentTimeDuration))} /{" "}
+                      {formatTime(Number(interviewTimeDuration) * 60)}
                     </span>
-                    
+
                     <div className="w-24">
-                      <Progress 
-                        value={getProgressPercentage()} 
+                      <Progress
+                        value={getProgressPercentage()}
                         className="h-1 bg-gray-200"
                       />
                     </div>
@@ -630,16 +680,24 @@ function Call({ interview }: InterviewProps) {
                   <div className="text-center space-y-4">
                     {/* AI Avatar */}
                     <div className="relative">
-                      <div className={`w-24 h-24 rounded-full border-2 transition-all duration-300 ${
-                        activeTurn === "agent" 
-                          ? "border-black bg-black" 
-                          : "border-gray-300 bg-white"
-                      } flex items-center justify-center`}>
-                        <span className={`text-lg font-medium ${
-                          activeTurn === "agent" ? "text-white" : "text-gray-600"
-                        }`}>AI</span>
+                      <div
+                        className={`w-24 h-24 rounded-full border-2 transition-all duration-300 ${
+                          activeTurn === "agent"
+                            ? "border-black bg-black"
+                            : "border-gray-300 bg-white"
+                        } flex items-center justify-center`}
+                      >
+                        <span
+                          className={`text-lg font-medium ${
+                            activeTurn === "agent"
+                              ? "text-white"
+                              : "text-gray-600"
+                          }`}
+                        >
+                          AI
+                        </span>
                       </div>
-                      
+
                       {/* Speaking Indicator */}
                       {activeTurn === "agent" && (
                         <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
@@ -651,7 +709,9 @@ function Call({ interview }: InterviewProps) {
                     </div>
 
                     <div>
-                      <h3 className="font-medium text-gray-900">AI Interviewer</h3>
+                      <h3 className="font-medium text-gray-900">
+                        AI Interviewer
+                      </h3>
                       <span className="text-sm text-gray-500">
                         {activeTurn === "agent" ? "Speaking" : "Listening"}
                       </span>
@@ -661,9 +721,12 @@ function Call({ interview }: InterviewProps) {
                   {/* Current Question Display */}
                   <div className="mt-8 w-full max-w-md">
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
-                      <h4 className="text-sm font-medium text-gray-900 mb-2">Current Question:</h4>
+                      <h4 className="text-sm font-medium text-gray-900 mb-2">
+                        Current Question:
+                      </h4>
                       <p className="text-sm text-gray-700 leading-relaxed">
-                        {lastInterviewerResponse || "Preparing your first question..."}
+                        {lastInterviewerResponse ||
+                          "Preparing your first question..."}
                       </p>
                     </div>
                   </div>
@@ -674,16 +737,24 @@ function Call({ interview }: InterviewProps) {
                   <div className="text-center space-y-4">
                     {/* User Avatar */}
                     <div className="relative">
-                      <div className={`w-24 h-24 rounded-full border-2 transition-all duration-300 ${
-                        activeTurn === "user" 
-                          ? "border-black bg-black" 
-                          : "border-gray-300 bg-white"
-                      } flex items-center justify-center`}>
-                        <span className={`text-lg font-medium ${
-                          activeTurn === "user" ? "text-white" : "text-gray-600"
-                        }`}>{name ? name[0].toUpperCase() : "U"}</span>
+                      <div
+                        className={`w-24 h-24 rounded-full border-2 transition-all duration-300 ${
+                          activeTurn === "user"
+                            ? "border-black bg-black"
+                            : "border-gray-300 bg-white"
+                        } flex items-center justify-center`}
+                      >
+                        <span
+                          className={`text-lg font-medium ${
+                            activeTurn === "user"
+                              ? "text-white"
+                              : "text-gray-600"
+                          }`}
+                        >
+                          {name ? name[0].toUpperCase() : "U"}
+                        </span>
                       </div>
-                      
+
                       {/* Speaking Indicator */}
                       {activeTurn === "user" && (
                         <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
@@ -695,7 +766,9 @@ function Call({ interview }: InterviewProps) {
                     </div>
 
                     <div>
-                      <h3 className="font-medium text-gray-900">{name || "You"}</h3>
+                      <h3 className="font-medium text-gray-900">
+                        {name || "You"}
+                      </h3>
                       <span className="text-sm text-gray-500">
                         {activeTurn === "user" ? "Speaking" : "Listening"}
                       </span>
@@ -705,8 +778,10 @@ function Call({ interview }: InterviewProps) {
                   {/* Your Response Display */}
                   <div className="mt-8 w-full max-w-md">
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
-                      <h4 className="text-sm font-medium text-gray-900 mb-2">Your Response:</h4>
-                      <div 
+                      <h4 className="text-sm font-medium text-gray-900 mb-2">
+                        Your Response:
+                      </h4>
+                      <div
                         ref={lastUserResponseRef}
                         className="max-h-24 overflow-y-auto"
                       >
@@ -736,11 +811,14 @@ function Call({ interview }: InterviewProps) {
                       <AlertDialogHeader>
                         <AlertDialogTitle>End Interview?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This action cannot be undone. Are you sure you want to end the interview?
+                          This action cannot be undone. Are you sure you want to
+                          end the interview?
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Continue Interview</AlertDialogCancel>
+                        <AlertDialogCancel>
+                          Continue Interview
+                        </AlertDialogCancel>
                         <AlertDialogAction
                           className="bg-red-600 hover:bg-red-700"
                           onClick={onEndCallClick}
@@ -769,33 +847,41 @@ function Call({ interview }: InterviewProps) {
                       {isStarted ? "Interview Complete" : "Thank You"}
                     </h2>
                     <p className="text-gray-600 text-sm">
-                      {isStarted 
+                      {isStarted
                         ? "Thank you for participating. Your analysis is being generated."
-                        : "Thank you for your interest."
-                      }
+                        : "Thank you for your interest."}
                     </p>
                   </div>
 
                   {/* Insights Section */}
                   {isStarted && (
                     <div className="bg-gray-50 rounded-lg p-4 border">
-                      <h3 className="font-medium text-gray-900 mb-3">Analysis</h3>
-                      
+                      <h3 className="font-medium text-gray-900 mb-3">
+                        Analysis
+                      </h3>
+
                       {isGeneratingInsights ? (
                         <div className="flex items-center justify-center py-6">
                           <div className="flex items-center gap-2">
                             <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-400 border-t-transparent"></div>
-                            <span className="text-gray-600 text-sm">Generating insights...</span>
+                            <span className="text-gray-600 text-sm">
+                              Generating insights...
+                            </span>
                           </div>
                         </div>
                       ) : insightsError ? (
                         <div className="bg-red-50 border border-red-200 rounded p-3">
-                          <p className="text-red-700 text-sm">Unable to generate insights: {insightsError}</p>
+                          <p className="text-red-700 text-sm">
+                            Unable to generate insights: {insightsError}
+                          </p>
                         </div>
                       ) : insights ? (
                         <div className="space-y-3">
                           {insights.map((insight: any, index: number) => (
-                            <div key={index} className="bg-white rounded p-3 border">
+                            <div
+                              key={index}
+                              className="bg-white rounded p-3 border"
+                            >
                               <h4 className="font-medium text-gray-900 text-sm mb-1">
                                 {insight.title || `Insight ${index + 1}`}
                               </h4>
@@ -805,12 +891,16 @@ function Call({ interview }: InterviewProps) {
                               {insight.score && (
                                 <div className="mt-2 flex items-center gap-2">
                                   <div className="w-16 bg-gray-200 rounded-full h-1">
-                                    <div 
+                                    <div
                                       className="bg-gray-600 h-1 rounded-full"
-                                      style={{ width: `${Math.min(insight.score * 10, 100)}%` }}
+                                      style={{
+                                        width: `${Math.min(insight.score * 10, 100)}%`,
+                                      }}
                                     ></div>
                                   </div>
-                                  <span className="text-xs text-gray-500">{insight.score}/10</span>
+                                  <span className="text-xs text-gray-500">
+                                    {insight.score}/10
+                                  </span>
                                 </div>
                               )}
                             </div>
@@ -818,14 +908,19 @@ function Call({ interview }: InterviewProps) {
                         </div>
                       ) : (
                         <div className="text-center py-6">
-                          <p className="text-gray-500 text-sm">Analysis will appear here...</p>
+                          <p className="text-gray-500 text-sm">
+                            Analysis will appear here...
+                          </p>
                         </div>
                       )}
                     </div>
                   )}
 
                   {!isFeedbackSubmitted && (
-                    <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <AlertDialog
+                      open={isDialogOpen}
+                      onOpenChange={setIsDialogOpen}
+                    >
                       <AlertDialogTrigger asChild>
                         <Button
                           variant="outline"
@@ -836,7 +931,10 @@ function Call({ interview }: InterviewProps) {
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
-                        <FeedbackForm email={email} onSubmit={handleFeedbackSubmit} />
+                        <FeedbackForm
+                          email={email}
+                          onSubmit={handleFeedbackSubmit}
+                        />
                       </AlertDialogContent>
                     </AlertDialog>
                   )}
@@ -857,11 +955,14 @@ function Call({ interview }: InterviewProps) {
                   <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center mx-auto">
                     <AlertTriangle className="w-6 h-6 text-white" />
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <h2 className="text-lg font-semibold text-gray-900">Already Completed</h2>
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      Already Completed
+                    </h2>
                     <p className="text-gray-600 text-sm">
-                      You have already responded to this interview or are not eligible to participate.
+                      You have already responded to this interview or are not
+                      eligible to participate.
                     </p>
                   </div>
 

@@ -4,16 +4,16 @@ import { Interview } from "@/types/interview";
 import { Interviewer } from "@/types/interviewer";
 import { Response } from "@/types/response";
 import React, { useEffect, useState } from "react";
-import { 
-  UserCircleIcon, 
-  SmileIcon, 
-  Info, 
-  Clock, 
-  CheckCircle, 
+import {
+  UserCircleIcon,
+  SmileIcon,
+  Info,
+  Clock,
+  CheckCircle,
   TrendingUp,
   Users,
   Award,
-  BarChart3
+  BarChart3,
 } from "lucide-react";
 import { useInterviewers } from "@/contexts/interviewers.context";
 import { PieChart } from "@mui/x-charts/PieChart";
@@ -53,13 +53,13 @@ function InfoTooltip({ content }: { content: string }) {
   );
 }
 
-function MetricCard({ 
-  title, 
-  value, 
-  icon: Icon, 
-  color, 
-  tooltip, 
-  subtitle 
+function MetricCard({
+  title,
+  value,
+  icon: Icon,
+  color,
+  tooltip,
+  subtitle,
 }: {
   title: string;
   value: string | number;
@@ -79,12 +79,12 @@ function MetricCard({
             </div>
             <div className="flex items-baseline gap-2">
               <p className={`text-3xl font-bold ${color}`}>{value}</p>
-              {subtitle && (
-                <p className="text-sm text-gray-500">{subtitle}</p>
-              )}
+              {subtitle && <p className="text-sm text-gray-500">{subtitle}</p>}
             </div>
           </div>
-          <div className={`p-3 rounded-full bg-gradient-to-r ${color.replace('text-', 'from-').replace('-600', '-100')} ${color.replace('text-', 'to-').replace('-600', '-200')}`}>
+          <div
+            className={`p-3 rounded-full bg-gradient-to-r ${color.replace("text-", "from-").replace("-600", "-100")} ${color.replace("text-", "to-").replace("-600", "-200")}`}
+          >
             <Icon className={`w-6 h-6 ${color}`} />
           </div>
         </div>
@@ -159,8 +159,12 @@ function SummaryInfo({ responses, interview }: SummaryProps) {
       else if (sentiment === "Neutral") sentimentCounter.neutral += 1;
 
       // Completion tracking
-      const agentTaskCompletion = response.details?.call_analysis?.agent_task_completion_rating;
-      if (agentTaskCompletion === "Complete" || agentTaskCompletion === "Partial") {
+      const agentTaskCompletion =
+        response.details?.call_analysis?.agent_task_completion_rating;
+      if (
+        agentTaskCompletion === "Complete" ||
+        agentTaskCompletion === "Partial"
+      ) {
         completedCount += 1;
       }
 
@@ -172,7 +176,11 @@ function SummaryInfo({ responses, interview }: SummaryProps) {
       }
 
       // Status tracking
-      if (Object.values(CandidateStatus).includes(response.candidate_status as CandidateStatus)) {
+      if (
+        Object.values(CandidateStatus).includes(
+          response.candidate_status as CandidateStatus,
+        )
+      ) {
         statusCounter[response.candidate_status as CandidateStatus]++;
       }
     });
@@ -197,9 +205,13 @@ function SummaryInfo({ responses, interview }: SummaryProps) {
               No Interview Data Yet
             </h3>
             <p className="text-gray-600 mb-6">
-              Share your interview link with candidates to start collecting responses and analytics.
+              Share your interview link with candidates to start collecting
+              responses and analytics.
             </p>
-            <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200">
+            <Badge
+              variant="outline"
+              className="bg-indigo-50 text-indigo-700 border-indigo-200"
+            >
               Ready to collect data
             </Badge>
           </CardContent>
@@ -239,11 +251,15 @@ function SummaryInfo({ responses, interview }: SummaryProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
                   <span className="text-gray-600">Interviewer:</span>
-                  <span className="font-semibold ml-2">{interviewer?.name || "Unknown"}</span>
+                  <span className="font-semibold ml-2">
+                    {interviewer?.name || "Unknown"}
+                  </span>
                 </div>
                 <div>
                   <span className="text-gray-600">Description:</span>
-                  <span className="font-semibold ml-2">{interview?.description || "No description"}</span>
+                  <span className="font-semibold ml-2">
+                    {interview?.description || "No description"}
+                  </span>
                 </div>
               </div>
             </CardContent>
@@ -334,7 +350,11 @@ function SummaryInfo({ responses, interview }: SummaryProps) {
                       },
                     ],
                     highlightScope: { faded: "global", highlighted: "item" },
-                    faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
+                    faded: {
+                      innerRadius: 30,
+                      additionalRadius: -30,
+                      color: "gray",
+                    },
                   },
                 ]}
                 width={400}
@@ -371,7 +391,8 @@ function SummaryInfo({ responses, interview }: SummaryProps) {
                       },
                       {
                         id: 2,
-                        value: candidateStatusCount[CandidateStatus.NOT_SELECTED],
+                        value:
+                          candidateStatusCount[CandidateStatus.NOT_SELECTED],
                         label: `Not Selected (${candidateStatusCount[CandidateStatus.NOT_SELECTED]})`,
                         color: "#ef4444",
                       },
@@ -383,7 +404,11 @@ function SummaryInfo({ responses, interview }: SummaryProps) {
                       },
                     ],
                     highlightScope: { faded: "global", highlighted: "item" },
-                    faded: { innerRadius: 30, additionalRadius: -30, color: "gray" },
+                    faded: {
+                      innerRadius: 30,
+                      additionalRadius: -30,
+                      color: "gray",
+                    },
                   },
                 ]}
                 width={400}

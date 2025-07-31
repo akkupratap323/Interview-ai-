@@ -47,8 +47,8 @@ const getClientById = async (
       ...user,
       created_at: user.createdAt,
       user_id: user.user_id || user.id,
-      image_url: user.image_url || '',
-      organization_id: user.organization_id || '',
+      image_url: user.image_url || "",
+      organization_id: user.organization_id || "",
     };
   } catch (error) {
     console.log(error);

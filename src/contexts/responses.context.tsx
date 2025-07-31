@@ -4,7 +4,11 @@ import React, { useContext } from "react";
 
 interface Response {
   createResponse: (payload: any) => Promise<any>;
-  saveResponse: (payload: any, call_id: string, interview_id?: string) => Promise<any>;
+  saveResponse: (
+    payload: any,
+    call_id: string,
+    interview_id?: string,
+  ) => Promise<any>;
 }
 
 export const ResponseContext = React.createContext<Response>({
@@ -20,12 +24,12 @@ export function ResponseProvider({ children }: ResponseProviderProps) {
   const createResponse = async (payload: any) => {
     console.log("🔗 ResponseContext.createResponse - ENTRY POINT");
     console.log("🔗 ResponseContext.createResponse - payload:", payload);
-    
+
     try {
-      const response = await fetch('/api/create-response', {
-        method: 'POST',
+      const response = await fetch("/api/create-response", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
@@ -34,7 +38,10 @@ export function ResponseProvider({ children }: ResponseProviderProps) {
       console.log("🔗 ResponseContext.createResponse - API response:", result);
 
       if (response.ok && result.success) {
-        console.log("🔗 ResponseContext.createResponse - SUCCESS! ID:", result.id);
+        console.log(
+          "🔗 ResponseContext.createResponse - SUCCESS! ID:",
+          result.id,
+        );
         return result.id;
       } else {
         console.error("🔗 ResponseContext.createResponse - API ERROR:");
@@ -48,15 +55,26 @@ export function ResponseProvider({ children }: ResponseProviderProps) {
     }
   };
 
-  const saveResponse = async (payload: any, call_id: string, interview_id?: string) => {
+  const saveResponse = async (
+    payload: any,
+    call_id: string,
+    interview_id?: string,
+  ) => {
     try {
       console.log("🔗 ResponseContext.saveResponse - ENTRY POINT");
-      console.log("🔗 ResponseContext.saveResponse - payload:", payload, "call_id:", call_id, "interview_id:", interview_id);
-      
-      const response = await fetch('/api/update-response', {
-        method: 'POST',
+      console.log(
+        "🔗 ResponseContext.saveResponse - payload:",
+        payload,
+        "call_id:",
+        call_id,
+        "interview_id:",
+        interview_id,
+      );
+
+      const response = await fetch("/api/update-response", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           callId: call_id,

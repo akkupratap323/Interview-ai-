@@ -26,7 +26,7 @@ function QuestionsPopup({ interviewData, setProceed, setOpen }: Props) {
     interviewData.questions,
   );
   const [description, setDescription] = useState<string>(
-    interviewData.description?.trim() || '',
+    interviewData.description?.trim() || "",
   );
   const { fetchInterviews } = useInterviews();
 
@@ -68,7 +68,7 @@ function QuestionsPopup({ interviewData, setProceed, setOpen }: Props) {
   const onSave = async () => {
     try {
       setIsClicked(true);
-      
+
       interviewData.user_id = user?.id || "";
       interviewData.organization_id = organization?.id || "";
 
@@ -93,29 +93,28 @@ function QuestionsPopup({ interviewData, setProceed, setOpen }: Props) {
       });
 
       console.log("Interview creation response:", response.data);
-      
+
       // Show success message
       toast.success("Interview created successfully!", {
         description: "Your interview is now ready to share",
         duration: 3000,
       });
-      
+
       // Refresh the interviews list immediately
       console.log("Refreshing interviews after creation...");
       await fetchInterviews();
       console.log("Interviews refreshed after creation");
-      
+
       setIsClicked(false);
       setOpen(false);
-      
     } catch (error) {
       console.error("Error creating interview:", error);
       setIsClicked(false);
-      
+
       // Show user-friendly error message
       if (axios.isAxiosError(error) && error.response) {
         console.error("Server error:", error.response.data);
-        const errorMsg = error.response.data.error || 'Unknown error';
+        const errorMsg = error.response.data.error || "Unknown error";
         const details = error.response.data.details;
         toast.error("Failed to create interview", {
           description: details ? `${errorMsg}: ${details}` : errorMsg,

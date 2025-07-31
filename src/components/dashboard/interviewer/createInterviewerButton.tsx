@@ -14,7 +14,7 @@ function CreateInterviewerButton() {
   const createInterviewers = async () => {
     try {
       setIsLoading(true);
-      
+
       // Show loading toast
       toast.loading("Creating AI interviewers...", {
         id: "create-interviewers",
@@ -23,17 +23,17 @@ function CreateInterviewerButton() {
 
       const response = await axios.get("/api/create-interviewer", {});
       console.log(response);
-      
+
       // Refresh the interviewers list
       await InterviewerService.getAllInterviewers();
-      
+
       // Show success toast
       toast.success("AI Interviewers Created!", {
         id: "create-interviewers",
-        description: "Two default interviewers have been added to your collection",
+        description:
+          "Two default interviewers have been added to your collection",
         duration: 4000,
       });
-      
     } catch (error) {
       console.error("Error creating interviewers:", error);
       toast.error("Failed to create interviewers", {
@@ -50,9 +50,10 @@ function CreateInterviewerButton() {
     <Card
       className={`
         group relative overflow-hidden border-2 border-dashed 
-        ${isLoading 
-          ? 'border-indigo-300 bg-indigo-50/50 cursor-not-allowed' 
-          : 'border-gray-300 hover:border-indigo-400 hover:bg-gradient-to-br hover:from-indigo-50 hover:to-purple-50 cursor-pointer'
+        ${
+          isLoading
+            ? "border-indigo-300 bg-indigo-50/50 cursor-not-allowed"
+            : "border-gray-300 hover:border-indigo-400 hover:bg-gradient-to-br hover:from-indigo-50 hover:to-purple-50 cursor-pointer"
         }
         transition-all duration-300 ease-in-out
         hover:scale-[1.02] hover:shadow-xl
@@ -72,13 +73,16 @@ function CreateInterviewerButton() {
         {/* Top Section - Icon and Status */}
         <div className="flex flex-col items-center space-y-4">
           {/* Icon Container */}
-          <div className={`
+          <div
+            className={`
             relative p-4 rounded-2xl transition-all duration-300
-            ${isLoading 
-              ? 'bg-indigo-100 border-2 border-indigo-200' 
-              : 'bg-gradient-to-br from-indigo-100 to-purple-100 border-2 border-transparent group-hover:border-indigo-200 group-hover:shadow-lg'
+            ${
+              isLoading
+                ? "bg-indigo-100 border-2 border-indigo-200"
+                : "bg-gradient-to-br from-indigo-100 to-purple-100 border-2 border-transparent group-hover:border-indigo-200 group-hover:shadow-lg"
             }
-          `}>
+          `}
+          >
             {isLoading ? (
               <div className="relative">
                 <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
@@ -107,27 +111,32 @@ function CreateInterviewerButton() {
 
         {/* Middle Section - Title */}
         <div className="text-center space-y-2">
-          <h3 className={`
+          <h3
+            className={`
             font-semibold text-lg leading-tight transition-colors duration-300
-            ${isLoading 
-              ? 'text-indigo-600' 
-              : 'text-gray-800 group-hover:text-indigo-700'
+            ${
+              isLoading
+                ? "text-indigo-600"
+                : "text-gray-800 group-hover:text-indigo-700"
             }
-          `}>
-            {isLoading ? 'Creating AI Interviewers' : 'Quick Setup'}
+          `}
+          >
+            {isLoading ? "Creating AI Interviewers" : "Quick Setup"}
           </h3>
-          
-          <p className={`
+
+          <p
+            className={`
             text-sm leading-relaxed transition-colors duration-300
-            ${isLoading 
-              ? 'text-indigo-500' 
-              : 'text-gray-600 group-hover:text-gray-700'
+            ${
+              isLoading
+                ? "text-indigo-500"
+                : "text-gray-600 group-hover:text-gray-700"
             }
-          `}>
-            {isLoading 
-              ? 'Setting up your intelligent interview assistants...' 
-              : 'Create two default AI interviewers to get started quickly'
-            }
+          `}
+          >
+            {isLoading
+              ? "Setting up your intelligent interview assistants..."
+              : "Create two default AI interviewers to get started quickly"}
           </p>
         </div>
 
@@ -149,20 +158,25 @@ function CreateInterviewerButton() {
           {/* Progress Indicator */}
           {isLoading && (
             <div className="w-full bg-indigo-100 rounded-full h-1.5 overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full animate-pulse" 
-                   style={{ width: '70%' }} />
+              <div
+                className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full animate-pulse"
+                style={{ width: "70%" }}
+              />
             </div>
           )}
 
           {/* Call to Action */}
-          <div className={`
+          <div
+            className={`
             text-center text-xs font-medium transition-all duration-300
-            ${isLoading 
-              ? 'text-indigo-600' 
-              : 'text-gray-500 group-hover:text-indigo-600'
+            ${
+              isLoading
+                ? "text-indigo-600"
+                : "text-gray-500 group-hover:text-indigo-600"
             }
-          `}>
-            {isLoading ? 'Please wait...' : 'Click to create'}
+          `}
+          >
+            {isLoading ? "Please wait..." : "Click to create"}
           </div>
         </div>
       </CardContent>

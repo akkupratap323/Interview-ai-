@@ -3,9 +3,9 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { useInterviewers } from "@/contexts/interviewers.context";
 import { InterviewBase, Question } from "@/types/interview";
-import { 
-  ChevronRight, 
-  ChevronLeft, 
+import {
+  ChevronRight,
+  ChevronLeft,
   Info,
   FileText,
   Target,
@@ -17,7 +17,7 @@ import {
   CheckCircle,
   AlertCircle,
   Eye,
-  Settings
+  Settings,
 } from "lucide-react";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,8 +63,9 @@ function DetailsPopup({
   fileName,
   setFileName,
 }: Props) {
-  const { interviewers, interviewersLoading, fetchInterviewers } = useInterviewers();
-  
+  const { interviewers, interviewersLoading, fetchInterviewers } =
+    useInterviewers();
+
   const { organization } = useOrganization();
   const [isClicked, setIsClicked] = useState(false);
   const [openInterviewerDetails, setOpenInterviewerDetails] = useState(false);
@@ -89,7 +90,13 @@ function DetailsPopup({
 
   // Calculate form completion progress
   useEffect(() => {
-    const fields = [name, selectedInterviewer !== "", objective, numQuestions, duration];
+    const fields = [
+      name,
+      selectedInterviewer !== "",
+      objective,
+      numQuestions,
+      duration,
+    ];
     const completed = fields.filter(Boolean).length;
     setFormProgress((completed / fields.length) * 100);
   }, [name, selectedInterviewer, objective, numQuestions, duration]);
@@ -97,19 +104,25 @@ function DetailsPopup({
   const slideLeft = (id: string, value: number) => {
     const slider = document.getElementById(id);
     if (slider) {
-      slider.scrollBy({ left: -value, behavior: 'smooth' });
+      slider.scrollBy({ left: -value, behavior: "smooth" });
     }
   };
 
   const slideRight = (id: string, value: number) => {
     const slider = document.getElementById(id);
     if (slider) {
-      slider.scrollBy({ left: value, behavior: 'smooth' });
+      slider.scrollBy({ left: value, behavior: "smooth" });
     }
   };
 
   const isFormValid = () => {
-    return name && objective && numQuestions && duration && selectedInterviewer !== "";
+    return (
+      name &&
+      objective &&
+      numQuestions &&
+      duration &&
+      selectedInterviewer !== ""
+    );
   };
 
   const onGenerateQuestions = async () => {
@@ -123,8 +136,8 @@ function DetailsPopup({
       });
 
       const data = {
-        name: name?.trim() || '',
-        objective: objective?.trim() || '',
+        name: name?.trim() || "",
+        objective: objective?.trim() || "",
         number: numQuestions,
         context: uploadedDocumentContext,
       };
@@ -148,8 +161,8 @@ function DetailsPopup({
 
       const updatedInterviewData = {
         ...interviewData,
-        name: name?.trim() || '',
-        objective: objective?.trim() || '',
+        name: name?.trim() || "",
+        objective: objective?.trim() || "",
         questions: updatedQuestions,
         interviewer_id: selectedInterviewer,
         question_count: Number(numQuestions),
@@ -183,8 +196,8 @@ function DetailsPopup({
 
       const updatedInterviewData = {
         ...interviewData,
-        name: name?.trim() || '',
-        objective: objective?.trim() || '',
+        name: name?.trim() || "",
+        objective: objective?.trim() || "",
         questions: [{ id: uuidv4(), question: "", follow_up_count: 1 }],
         interviewer_id: selectedInterviewer,
         question_count: Number(numQuestions),
@@ -233,8 +246,12 @@ function DetailsPopup({
                 <FileText className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Interview Details</h1>
-                <p className="text-gray-600 mt-1">Configure your AI interview settings</p>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  Interview Details
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  Configure your AI interview settings
+                </p>
               </div>
             </div>
 
@@ -260,14 +277,17 @@ function DetailsPopup({
               <CardContent className="p-8 space-y-6">
                 {/* Interview Name */}
                 <div className="space-y-2">
-                  <Label htmlFor="interview-name" className="text-sm font-semibold text-gray-700">
+                  <Label
+                    htmlFor="interview-name"
+                    className="text-sm font-semibold text-gray-700"
+                  >
                     Interview Name *
                   </Label>
                   <Input
                     id="interview-name"
                     type="text"
                     placeholder="e.g., Senior Software Engineer Interview"
-                    value={name || ''}
+                    value={name || ""}
                     onChange={(e) => setName(e.target.value)}
                     onBlur={(e) => setName(e.target.value.trim())}
                     className="h-12 text-base border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
@@ -276,13 +296,16 @@ function DetailsPopup({
 
                 {/* Objective */}
                 <div className="space-y-2">
-                  <Label htmlFor="objective" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <Label
+                    htmlFor="objective"
+                    className="text-sm font-semibold text-gray-700 flex items-center gap-2"
+                  >
                     <Target className="w-4 h-4 text-indigo-600" />
                     Interview Objective *
                   </Label>
                   <Textarea
                     id="objective"
-                    value={objective || ''}
+                    value={objective || ""}
                     className="min-h-[120px] text-base border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
                     placeholder="e.g., Evaluate candidates' technical skills, problem-solving abilities, and cultural fit for our engineering team."
                     onChange={(e) => setObjective(e.target.value)}
@@ -304,31 +327,48 @@ function DetailsPopup({
                 {interviewersLoading ? (
                   <div className="flex items-center justify-center py-12">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-                    <span className="ml-2 text-gray-600">Loading interviewers...</span>
+                    <span className="ml-2 text-gray-600">
+                      Loading interviewers...
+                    </span>
                   </div>
                 ) : interviewers.length === 0 ? (
                   <div className="text-center py-12">
                     <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <p className="text-gray-600">No interviewers available</p>
-                    <p className="text-sm text-gray-500 mb-4">Please create interviewers first</p>
+                    <p className="text-sm text-gray-500 mb-4">
+                      Please create interviewers first
+                    </p>
                     <Button
                       onClick={async () => {
                         try {
-                          toast.loading('Creating AI interviewers...', { id: 'create-interviewers' });
-                          const response = await fetch('/api/init-interviewers', {
-                            method: 'POST',
+                          toast.loading("Creating AI interviewers...", {
+                            id: "create-interviewers",
                           });
+                          const response = await fetch(
+                            "/api/init-interviewers",
+                            {
+                              method: "POST",
+                            },
+                          );
                           if (response.ok) {
-                            toast.success('Default interviewers created successfully', { id: 'create-interviewers' });
+                            toast.success(
+                              "Default interviewers created successfully",
+                              { id: "create-interviewers" },
+                            );
                             // Refetch interviewers
                             await fetchInterviewers();
                           } else {
                             const error = await response.json();
-                            toast.error(error.error || 'Failed to create interviewers', { id: 'create-interviewers' });
+                            toast.error(
+                              error.error || "Failed to create interviewers",
+                              { id: "create-interviewers" },
+                            );
                           }
                         } catch (error) {
-                          console.error('Error creating interviewers:', error);
-                          toast.error('Error creating interviewers', { id: 'create-interviewers' });
+                          console.error("Error creating interviewers:", error);
+                          toast.error("Error creating interviewers", {
+                            id: "create-interviewers",
+                          });
                         }
                       }}
                       className="bg-indigo-600 hover:bg-indigo-700 text-white"
@@ -341,103 +381,110 @@ function DetailsPopup({
                   <div className="relative">
                     {/* Navigation Buttons */}
                     {interviewers.length > 3 && (
-                    <>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white border-gray-200"
-                        onClick={() => slideLeft("interviewer-slider", 280)}
-                      >
-                        <ChevronLeft className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white border-gray-200"
-                        onClick={() => slideRight("interviewer-slider", 280)}
-                      >
-                        <ChevronRight className="w-4 h-4" />
-                      </Button>
-                    </>
-                  )}
-
-                  {/* Interviewers Carousel */}
-                  <div className="overflow-hidden px-12">
-                    <div
-                      id="interviewer-slider"
-                      className="flex space-x-6 overflow-x-auto scrollbar-hide scroll-smooth py-4"
-                    >
-                      {interviewers.map((interviewer) => (
-                        <div
-                          key={interviewer.id}
-                          className="flex-none group cursor-pointer"
-                          onClick={() => setSelectedInterviewer(interviewer.id)}
+                      <>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white border-gray-200"
+                          onClick={() => slideLeft("interviewer-slider", 280)}
                         >
-                          <div className="relative">
-                            {/* Info Button */}
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="absolute -top-2 -right-2 z-20 w-8 h-8 bg-indigo-500 hover:bg-indigo-600 text-white rounded-full shadow-lg"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setInterviewerDetails(interviewer);
-                                      setOpenInterviewerDetails(true);
-                                    }}
-                                  >
-                                    <Info className="w-4 h-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>View interviewer details</TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
+                          <ChevronLeft className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm shadow-lg hover:bg-white border-gray-200"
+                          onClick={() => slideRight("interviewer-slider", 280)}
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </Button>
+                      </>
+                    )}
 
-                            {/* Avatar */}
-                            <div
-                              className={`
+                    {/* Interviewers Carousel */}
+                    <div className="overflow-hidden px-12">
+                      <div
+                        id="interviewer-slider"
+                        className="flex space-x-6 overflow-x-auto scrollbar-hide scroll-smooth py-4"
+                      >
+                        {interviewers.map((interviewer) => (
+                          <div
+                            key={interviewer.id}
+                            className="flex-none group cursor-pointer"
+                            onClick={() =>
+                              setSelectedInterviewer(interviewer.id)
+                            }
+                          >
+                            <div className="relative">
+                              {/* Info Button */}
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="absolute -top-2 -right-2 z-20 w-8 h-8 bg-indigo-500 hover:bg-indigo-600 text-white rounded-full shadow-lg"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setInterviewerDetails(interviewer);
+                                        setOpenInterviewerDetails(true);
+                                      }}
+                                    >
+                                      <Info className="w-4 h-4" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    View interviewer details
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+
+                              {/* Avatar */}
+                              <div
+                                className={`
                                 relative w-32 h-32 rounded-2xl overflow-hidden transition-all duration-300 group-hover:scale-105
-                                ${selectedInterviewer === interviewer.id
-                                  ? "ring-4 ring-indigo-500 shadow-xl scale-105"
-                                  : "ring-2 ring-gray-200 hover:ring-indigo-300"
+                                ${
+                                  selectedInterviewer === interviewer.id
+                                    ? "ring-4 ring-indigo-500 shadow-xl scale-105"
+                                    : "ring-2 ring-gray-200 hover:ring-indigo-300"
                                 }
                               `}
-                            >
-                              <Image
-                                src={interviewer.image}
-                                alt={`${interviewer.name} - AI Interviewer`}
-                                fill
-                                className="object-cover"
-                              />
-                              {selectedInterviewer === interviewer.id && (
-                                <div className="absolute inset-0 bg-indigo-500/20 flex items-center justify-center">
-                                  <CheckCircle className="w-8 h-8 text-white drop-shadow-lg" />
-                                </div>
-                              )}
-                            </div>
+                              >
+                                <Image
+                                  src={interviewer.image}
+                                  alt={`${interviewer.name} - AI Interviewer`}
+                                  fill
+                                  className="object-cover"
+                                />
+                                {selectedInterviewer === interviewer.id && (
+                                  <div className="absolute inset-0 bg-indigo-500/20 flex items-center justify-center">
+                                    <CheckCircle className="w-8 h-8 text-white drop-shadow-lg" />
+                                  </div>
+                                )}
+                              </div>
 
-                            {/* Name and Badge */}
-                            <div className="mt-3 text-center">
-                              <h3 className={`
+                              {/* Name and Badge */}
+                              <div className="mt-3 text-center">
+                                <h3
+                                  className={`
                                 font-semibold transition-colors duration-300
                                 ${selectedInterviewer === interviewer.id ? "text-indigo-600" : "text-gray-800"}
-                              `}>
-                                {interviewer.name}
-                              </h3>
-                              {selectedInterviewer === interviewer.id && (
-                                <Badge className="mt-2 bg-indigo-100 text-indigo-700 border-indigo-200">
-                                  <CheckCircle className="w-3 h-3 mr-1" />
-                                  Selected
-                                </Badge>
-                              )}
+                              `}
+                                >
+                                  {interviewer.name}
+                                </h3>
+                                {selectedInterviewer === interviewer.id && (
+                                  <Badge className="mt-2 bg-indigo-100 text-indigo-700 border-indigo-200">
+                                    <CheckCircle className="w-3 h-3 mr-1" />
+                                    Selected
+                                  </Badge>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
                   </div>
                 )}
               </CardContent>
@@ -455,7 +502,10 @@ function DetailsPopup({
                 {/* Questions and Duration */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="num-questions" className="text-sm font-semibold text-gray-700">
+                    <Label
+                      htmlFor="num-questions"
+                      className="text-sm font-semibold text-gray-700"
+                    >
                       Number of Questions *
                     </Label>
                     <Input
@@ -467,7 +517,10 @@ function DetailsPopup({
                       value={numQuestions}
                       onChange={(e) => {
                         let value = e.target.value;
-                        if (value === "" || (Number.isInteger(Number(value)) && Number(value) > 0)) {
+                        if (
+                          value === "" ||
+                          (Number.isInteger(Number(value)) && Number(value) > 0)
+                        ) {
                           if (Number(value) > 5) value = "5";
                           setNumQuestions(value);
                         }
@@ -478,7 +531,10 @@ function DetailsPopup({
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="duration" className="text-sm font-semibold text-gray-700">
+                    <Label
+                      htmlFor="duration"
+                      className="text-sm font-semibold text-gray-700"
+                    >
                       Duration (minutes) *
                     </Label>
                     <Input
@@ -487,10 +543,13 @@ function DetailsPopup({
                       min="1"
                       max="10"
                       placeholder="10"
-                      value={duration || ''}
+                      value={duration || ""}
                       onChange={(e) => {
                         let value = e.target.value;
-                        if (value === "" || (Number.isInteger(Number(value)) && Number(value) > 0)) {
+                        if (
+                          value === "" ||
+                          (Number.isInteger(Number(value)) && Number(value) > 0)
+                        ) {
                           if (Number(value) > 10) value = "10";
                           setDuration(value);
                         }
@@ -509,7 +568,8 @@ function DetailsPopup({
                         Anonymous Responses
                       </Label>
                       <p className="text-xs text-gray-500">
-                        When enabled, candidate names and emails won't be collected
+                        When enabled, candidate names and emails won't be
+                        collected
                       </p>
                     </div>
                     <Switch
@@ -528,13 +588,16 @@ function DetailsPopup({
                 <CardTitle className="flex items-center gap-2 text-xl">
                   <Upload className="w-5 h-5 text-orange-600" />
                   Supporting Documents
-                  <Badge variant="outline" className="ml-2 text-xs">Optional</Badge>
+                  <Badge variant="outline" className="ml-2 text-xs">
+                    Optional
+                  </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-8">
                 <div className="space-y-3">
                   <p className="text-sm text-gray-600">
-                    Upload any documents related to the interview (job descriptions, requirements, etc.)
+                    Upload any documents related to the interview (job
+                    descriptions, requirements, etc.)
                   </p>
                   <FileUpload
                     isUploaded={isUploaded}

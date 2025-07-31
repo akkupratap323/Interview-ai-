@@ -22,7 +22,7 @@ function QuestionAnswerCard({
             </span>
           </div>
         </div>
-        
+
         {/* Content Area */}
         <div className="flex-1 min-w-0">
           {/* Question */}
@@ -31,12 +31,10 @@ function QuestionAnswerCard({
               {question}
             </h3>
           </div>
-          
+
           {/* Answer */}
           <div className="bg-gray-50 rounded-lg p-4 border-l-2 border-gray-300">
-            <p className="text-gray-600 text-sm leading-relaxed">
-              {answer}
-            </p>
+            <p className="text-gray-600 text-sm leading-relaxed">{answer}</p>
           </div>
         </div>
       </div>

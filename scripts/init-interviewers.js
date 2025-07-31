@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 
 const db = new PrismaClient();
 
@@ -29,42 +29,43 @@ const INTERVIEWERS = {
 
 async function initInterviewers() {
   try {
-    console.log('Initializing default interviewers...');
-    
+    console.log("Initializing default interviewers...");
+
     // Check if interviewers already exist
     const existingInterviewers = await db.interviewer.findMany({
-      where: { user_id: null }
+      where: { user_id: null },
     });
-    
+
     if (existingInterviewers.length > 0) {
-      console.log(`Found ${existingInterviewers.length} existing default interviewers.`);
+      console.log(
+        `Found ${existingInterviewers.length} existing default interviewers.`,
+      );
       return;
     }
-    
+
     // Create Lisa
     const lisa = await db.interviewer.create({
       data: {
         agent_id: "temp_lisa_agent_id",
         user_id: null, // Global interviewer
         ...INTERVIEWERS.LISA,
-      }
+      },
     });
-    
+
     // Create Bob
     const bob = await db.interviewer.create({
       data: {
         agent_id: "temp_bob_agent_id",
         user_id: null, // Global interviewer
         ...INTERVIEWERS.BOB,
-      }
+      },
     });
-    
-    console.log('Default interviewers created successfully:');
-    console.log('- Lisa:', lisa.id);
-    console.log('- Bob:', bob.id);
-    
+
+    console.log("Default interviewers created successfully:");
+    console.log("- Lisa:", lisa.id);
+    console.log("- Bob:", bob.id);
   } catch (error) {
-    console.error('Error initializing interviewers:', error);
+    console.error("Error initializing interviewers:", error);
   } finally {
     await db.$disconnect();
   }

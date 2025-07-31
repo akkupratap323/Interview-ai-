@@ -3,11 +3,11 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { 
-  Image as LucideImage, 
-  Plus, 
-  Sparkles, 
-  Settings, 
+import {
+  Image as LucideImage,
+  Plus,
+  Sparkles,
+  Settings,
   User,
   Save,
   X,
@@ -15,7 +15,7 @@ import {
   Brain,
   Heart,
   Zap,
-  Search
+  Search,
 } from "lucide-react";
 import { CardTitle } from "@/components/ui/card";
 import Modal from "@/components/dashboard/Modal";
@@ -60,7 +60,7 @@ const CreateInterviewerCard = () => {
   const onSave = async () => {
     try {
       setIsLoading(true);
-      
+
       toast.loading("Creating your AI interviewer...", {
         id: "create-interviewer",
         description: "This may take a moment",
@@ -108,8 +108,10 @@ const CreateInterviewerCard = () => {
     return traits.join(" • ");
   };
 
-  const filteredAvatars = avatars.filter(avatar => 
-    !avatarSearch || avatar.id.toString().includes(avatarSearch.toLowerCase())
+  const filteredAvatars = avatars.filter(
+    (avatar) =>
+      !avatarSearch ||
+      avatar.id.toString().includes(avatarSearch.toLowerCase()),
   );
 
   const getSliderColor = (value: number) => {
@@ -199,9 +201,16 @@ const CreateInterviewerCard = () => {
                           </div>
                         ) : (
                           <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 group-hover:text-indigo-500 transition-colors duration-300">
-                            <LucideImage className="w-16 h-16 mb-3" strokeWidth={1} />
-                            <p className="text-sm font-medium">Click to select avatar</p>
-                            <p className="text-xs text-gray-400 mt-1">Choose from our gallery</p>
+                            <LucideImage
+                              className="w-16 h-16 mb-3"
+                              strokeWidth={1}
+                            />
+                            <p className="text-sm font-medium">
+                              Click to select avatar
+                            </p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              Choose from our gallery
+                            </p>
                           </div>
                         )}
                       </div>
@@ -210,7 +219,10 @@ const CreateInterviewerCard = () => {
 
                   {/* Name Input */}
                   <div className="space-y-3">
-                    <Label htmlFor="name" className="text-sm font-semibold text-gray-700">
+                    <Label
+                      htmlFor="name"
+                      className="text-sm font-semibold text-gray-700"
+                    >
                       Interviewer Name
                     </Label>
                     <Input
@@ -245,7 +257,8 @@ const CreateInterviewerCard = () => {
                       Personality Configuration
                     </Label>
                     <p className="text-xs text-gray-500">
-                      Adjust these settings to define your interviewer's behavior
+                      Adjust these settings to define your interviewer's
+                      behavior
                     </p>
                   </div>
 

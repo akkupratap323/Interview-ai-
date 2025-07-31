@@ -1,21 +1,21 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 
 const db = new PrismaClient({
-  log: ['query', 'info', 'warn', 'error'],
+  log: ["query", "info", "warn", "error"],
 });
 
 async function testResponses() {
   try {
     console.log("🔍 Testing responses in database...");
-    
+
     // Count all responses
     const responseCount = await db.response.count();
     console.log("📊 Total responses in database:", responseCount);
-    
+
     // Get all responses
     const allResponses = await db.response.findMany({
       take: 10,
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       select: {
         id: true,
         call_id: true,
@@ -24,10 +24,10 @@ async function testResponses() {
         email: true,
         is_analysed: true,
         analytics: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     });
-    
+
     console.log("📋 Responses found:", allResponses.length);
     allResponses.forEach((response, index) => {
       console.log(`   ${index + 1}. Call ID: ${response.call_id}`);
@@ -39,21 +39,23 @@ async function testResponses() {
       console.log(`      Created: ${response.createdAt}`);
       console.log("");
     });
-    
+
     // Check specific interview
     const interviewResponses = await db.response.findMany({
-      where: { interview_id: '-XuHR_yj5nA0K496qdWcm' },
+      where: { interview_id: "-XuHR_yj5nA0K496qdWcm" },
       select: {
         id: true,
         call_id: true,
         name: true,
         is_analysed: true,
-        analytics: true
-      }
+        analytics: true,
+      },
     });
-    
-    console.log("📋 Responses for interview -XuHR_yj5nA0K496qdWcm:", interviewResponses.length);
-    
+
+    console.log(
+      "📋 Responses for interview -XuHR_yj5nA0K496qdWcm:",
+      interviewResponses.length,
+    );
   } catch (error) {
     console.error("❌ Database test failed:", error);
   } finally {

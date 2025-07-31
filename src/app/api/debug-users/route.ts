@@ -13,8 +13,8 @@ export async function GET(req: NextRequest) {
         organization_id: true,
         createdAt: true,
       },
-      orderBy: { createdAt: 'desc' },
-      take: 10 // Show last 10 users
+      orderBy: { createdAt: "desc" },
+      take: 10, // Show last 10 users
     });
 
     console.log("👤 Debug - Found users:", users.length);
@@ -22,14 +22,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       totalUsers: users.length,
       users: users,
-      message: "Recent users in database"
+      message: "Recent users in database",
     });
-
   } catch (error) {
     console.error("👤 Debug - Error:", error);
-    return NextResponse.json({ 
-      error: "Debug failed", 
-      details: error instanceof Error ? error.message : "Unknown error" 
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Debug failed",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
+    );
   }
 }

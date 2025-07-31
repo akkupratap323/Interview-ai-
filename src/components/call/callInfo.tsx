@@ -5,14 +5,14 @@ import { Analytics, CallData } from "@/types/response";
 import axios from "axios";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ReactAudioPlayer from "react-audio-player";
-import { 
-  Download, 
-  Trash2, 
-  ArrowLeft, 
-  User, 
-  MessageSquare, 
-  TrendingUp, 
-  Clock, 
+import {
+  Download,
+  Trash2,
+  ArrowLeft,
+  User,
+  MessageSquare,
+  TrendingUp,
+  Clock,
   AlertTriangle,
   Play,
   Volume2,
@@ -24,7 +24,7 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
-  Minus
+  Minus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -114,10 +114,10 @@ function CallInfo({
       try {
         const response = await ResponseService.getResponseByCallId(call_id);
         if (response) {
-          setEmail(response.email || '');
-          setName(response.name || '');
-          setCandidateStatus(response.candidate_status || '');
-          setInterviewId(response.interview_id || '');
+          setEmail(response.email || "");
+          setName(response.name || "");
+          setCandidateStatus(response.candidate_status || "");
+          setInterviewId(response.interview_id || "");
           setTabSwitchCount(response.tab_switch_count || 0);
         }
       } catch (error) {
@@ -222,18 +222,22 @@ function CallInfo({
 
   const getSentimentColor = (sentiment: string) => {
     switch (sentiment) {
-      case "Positive": return "text-emerald-600";
-      case "Negative": return "text-red-600";
-      case "Neutral": return "text-amber-600";
-      default: return "text-gray-600";
+      case "Positive":
+        return "text-emerald-600";
+      case "Negative":
+        return "text-red-600";
+      case "Neutral":
+        return "text-amber-600";
+      default:
+        return "text-gray-600";
     }
   };
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <LoaderWithText 
-          message="Loading Candidate Details" 
+        <LoaderWithText
+          message="Loading Candidate Details"
           description="Preparing interview analysis and transcript"
         />
       </div>
@@ -275,14 +279,8 @@ function CallInfo({
                 <h1 className="text-2xl font-bold text-gray-900 mb-1">
                   {name || "Anonymous Candidate"}
                 </h1>
-                {email && (
-                  <p className="text-gray-600 text-sm mb-2">
-                    {email}
-                  </p>
-                )}
-                <div>
-                  {getStatusBadge(candidateStatus)}
-                </div>
+                {email && <p className="text-gray-600 text-sm mb-2">{email}</p>}
+                <div>{getStatusBadge(candidateStatus)}</div>
               </div>
             </div>
 
@@ -343,13 +341,18 @@ function CallInfo({
                 </AlertDialogTrigger>
                 <AlertDialogContent className="bg-white">
                   <AlertDialogHeader>
-                    <AlertDialogTitle className="text-gray-900">Delete Response</AlertDialogTitle>
+                    <AlertDialogTitle className="text-gray-900">
+                      Delete Response
+                    </AlertDialogTitle>
                     <AlertDialogDescription className="text-gray-600">
-                      This action cannot be undone. This will permanently delete this candidate&apos;s response and all associated data.
+                      This action cannot be undone. This will permanently delete
+                      this candidate&apos;s response and all associated data.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
+                    <AlertDialogCancel className="border-gray-200">
+                      Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                       className="bg-red-600 hover:bg-red-700 text-white"
                       onClick={onDeleteResponseClick}
@@ -376,17 +379,21 @@ function CallInfo({
                   asChild
                   className="border-gray-200 text-gray-600 hover:bg-gray-100"
                 >
-                  <a href={call.recording_url} download aria-label="Download recording">
+                  <a
+                    href={call.recording_url}
+                    download
+                    aria-label="Download recording"
+                  >
                     <Download className="w-4 h-4 mr-1" />
                     Download
                   </a>
                 </Button>
               </div>
-              <ReactAudioPlayer 
-                src={call.recording_url} 
-                controls 
+              <ReactAudioPlayer
+                src={call.recording_url}
+                controls
                 className="w-full"
-                style={{ width: '100%' }}
+                style={{ width: "100%" }}
               />
             </div>
           )}
@@ -410,26 +417,32 @@ function CallInfo({
                       <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
                         <Award className="w-4 h-4 text-blue-600" />
                       </div>
-                      <h3 className="font-medium text-gray-900">Overall Score</h3>
+                      <h3 className="font-medium text-gray-900">
+                        Overall Score
+                      </h3>
                     </div>
                     <Badge className="bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-3 py-1">
                       {analytics.overallScore}/100
                     </Badge>
                   </div>
-                  
+
                   <div className="mb-4">
                     <div className="w-full bg-gray-100 rounded-full h-2">
-                      <div 
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                      <div
+                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${analytics.overallScore}%` }}
                       ></div>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-700">Feedback:</p>
+                    <p className="text-sm font-medium text-gray-700">
+                      Feedback:
+                    </p>
                     <p className="text-sm text-gray-600 leading-relaxed">
-                      {analytics?.overallFeedback || <Skeleton className="w-full h-4" />}
+                      {analytics?.overallFeedback || (
+                        <Skeleton className="w-full h-4" />
+                      )}
                     </p>
                   </div>
                 </div>
@@ -443,26 +456,34 @@ function CallInfo({
                       <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center">
                         <MessageSquare className="w-4 h-4 text-green-600" />
                       </div>
-                      <h3 className="font-medium text-gray-900">Communication</h3>
+                      <h3 className="font-medium text-gray-900">
+                        Communication
+                      </h3>
                     </div>
                     <Badge className="bg-green-50 text-green-700 border border-green-200 rounded-full px-3 py-1">
                       {analytics.communication.score}/10
                     </Badge>
                   </div>
-                  
+
                   <div className="mb-4">
                     <div className="w-full bg-gray-100 rounded-full h-2">
-                      <div 
-                        className="bg-green-600 h-2 rounded-full transition-all duration-300" 
-                        style={{ width: `${analytics.communication.score * 10}%` }}
+                      <div
+                        className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                        style={{
+                          width: `${analytics.communication.score * 10}%`,
+                        }}
                       ></div>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-700">Feedback:</p>
+                    <p className="text-sm font-medium text-gray-700">
+                      Feedback:
+                    </p>
                     <p className="text-sm text-gray-600 leading-relaxed">
-                      {analytics?.communication.feedback || <Skeleton className="w-full h-4" />}
+                      {analytics?.communication.feedback || (
+                        <Skeleton className="w-full h-4" />
+                      )}
                     </p>
                   </div>
                 </div>
@@ -478,18 +499,24 @@ function CallInfo({
                     <h3 className="font-medium text-gray-900">Sentiment</h3>
                   </div>
                   <Badge className="bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-3 py-1">
-                    {call?.call_analysis?.user_sentiment || <Skeleton className="w-16 h-4" />}
+                    {call?.call_analysis?.user_sentiment || (
+                      <Skeleton className="w-16 h-4" />
+                    )}
                   </Badge>
                 </div>
-                
+
                 <div className="space-y-3">
                   <div>
-                    <p className="text-sm font-medium text-gray-700 mb-2">Call Summary:</p>
+                    <p className="text-sm font-medium text-gray-700 mb-2">
+                      Call Summary:
+                    </p>
                     <p className="text-sm text-gray-600 leading-relaxed">
-                      {call?.call_analysis?.call_summary || <Skeleton className="w-full h-4" />}
+                      {call?.call_analysis?.call_summary || (
+                        <Skeleton className="w-full h-4" />
+                      )}
                     </p>
                   </div>
-                  
+
                   {call?.call_analysis?.call_completion_rating_reason && (
                     <p className="text-sm text-gray-500 italic leading-relaxed">
                       {call.call_analysis.call_completion_rating_reason}
@@ -502,28 +529,29 @@ function CallInfo({
         </div>
 
         {/* Question Summary */}
-        {analytics?.questionSummaries && analytics.questionSummaries.length > 0 && (
-          <div className="bg-white rounded-lg border border-gray-100">
-            <div className="p-6 border-b border-gray-100">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                <Target className="w-5 h-5 text-gray-600" />
-                Question Analysis
-              </h2>
-            </div>
-            <div className="p-6">
-              <div className="space-y-4 max-h-96 overflow-y-auto">
-                {analytics.questionSummaries.map((qs, index) => (
-                  <QuestionAnswerCard
-                    key={qs.question}
-                    questionNumber={index + 1}
-                    question={qs.question}
-                    answer={qs.summary}
-                  />
-                ))}
+        {analytics?.questionSummaries &&
+          analytics.questionSummaries.length > 0 && (
+            <div className="bg-white rounded-lg border border-gray-100">
+              <div className="p-6 border-b border-gray-100">
+                <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                  <Target className="w-5 h-5 text-gray-600" />
+                  Question Analysis
+                </h2>
+              </div>
+              <div className="p-6">
+                <div className="space-y-4 max-h-96 overflow-y-auto">
+                  {analytics.questionSummaries.map((qs, index) => (
+                    <QuestionAnswerCard
+                      key={qs.question}
+                      questionNumber={index + 1}
+                      question={qs.question}
+                      answer={qs.summary}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Transcript */}
         <div className="bg-white rounded-lg border border-gray-100">

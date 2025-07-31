@@ -2,12 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  Copy, 
-  ExternalLink, 
-  Users, 
-  CopyCheck
-} from "lucide-react";
+import { Copy, ExternalLink, Users, CopyCheck } from "lucide-react";
 import { ResponseService } from "@/services/responses.service";
 import { toast } from "sonner";
 
@@ -43,18 +38,18 @@ function InterviewCard({ name, interviewerId, id, url, readableSlug }: Props) {
 
   const copyToClipboard = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    
+
     try {
       console.log("📋 InterviewCard copy - readableSlug:", readableSlug);
       console.log("📋 InterviewCard copy - base_url:", base_url);
       console.log("📋 InterviewCard copy - id:", id);
-      
-      const interviewLink = readableSlug 
-        ? `${base_url}/call/${readableSlug}` 
+
+      const interviewLink = readableSlug
+        ? `${base_url}/call/${readableSlug}`
         : `${base_url}/call/${id}`;
-      
+
       console.log("📋 InterviewCard copy - final link:", interviewLink);
-      
+
       if (!navigator.clipboard) {
         // Fallback for older browsers
         const textArea = document.createElement("textarea");
@@ -62,16 +57,15 @@ function InterviewCard({ name, interviewerId, id, url, readableSlug }: Props) {
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
-        document.execCommand('copy');
+        document.execCommand("copy");
         document.body.removeChild(textArea);
       } else {
         await navigator.clipboard.writeText(interviewLink);
       }
-      
+
       setCopied(true);
       toast.success(`Interview link copied!\n${interviewLink}`);
       setTimeout(() => setCopied(false), 2000);
-      
     } catch (error) {
       console.error("📋 InterviewCard copy failed:", error);
       toast.error("Failed to copy link. Please try again.");
@@ -80,14 +74,12 @@ function InterviewCard({ name, interviewerId, id, url, readableSlug }: Props) {
 
   const openInterview = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
+
     console.log("🔗 Open interview - readableSlug:", readableSlug);
     console.log("🔗 Open interview - id:", id);
-    
-    const interviewUrl = readableSlug
-      ? `/call/${readableSlug}`
-      : `/call/${id}`;
-    
+
+    const interviewUrl = readableSlug ? `/call/${readableSlug}` : `/call/${id}`;
+
     console.log("🔗 Open interview - final URL:", interviewUrl);
     window.open(interviewUrl, "_blank");
   };
@@ -97,13 +89,11 @@ function InterviewCard({ name, interviewerId, id, url, readableSlug }: Props) {
   };
 
   if (loading) {
-    return (
-      <Card className="h-48 bg-gray-100 animate-pulse rounded-lg" />
-    );
+    return <Card className="h-48 bg-gray-100 animate-pulse rounded-lg" />;
   }
 
   return (
-    <Card 
+    <Card
       className="group cursor-pointer border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 bg-white"
       onClick={handleCardClick}
     >
@@ -118,8 +108,8 @@ function InterviewCard({ name, interviewerId, id, url, readableSlug }: Props) {
               {readableSlug || "Custom URL"}
             </p>
           </div>
-          <Badge 
-            variant="outline" 
+          <Badge
+            variant="outline"
             className="ml-2 bg-green-50 text-green-700 border-green-200"
           >
             Active

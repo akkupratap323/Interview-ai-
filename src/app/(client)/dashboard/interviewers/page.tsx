@@ -2,11 +2,7 @@
 
 import { useInterviewers } from "@/contexts/interviewers.context";
 import React, { useState } from "react";
-import { 
-  Users, 
-  Search,
-  Plus
-} from "lucide-react";
+import { Users, Search, Plus } from "lucide-react";
 import InterviewerCard from "@/components/dashboard/interviewer/interviewerCard";
 import CreateInterviewerButton from "@/components/dashboard/interviewer/createInterviewerButton";
 import { Input } from "@/components/ui/input";
@@ -17,17 +13,14 @@ function Interviewers() {
   const { interviewers, interviewersLoading } = useInterviewers();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredInterviewers = interviewers.filter(interviewer =>
-    interviewer.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredInterviewers = interviewers.filter((interviewer) =>
+    interviewer.name?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const LoadingSkeleton = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {[...Array(6)].map((_, i) => (
-        <div
-          key={i}
-          className="h-64 bg-gray-100 rounded-lg animate-pulse"
-        />
+        <div key={i} className="h-64 bg-gray-100 rounded-lg animate-pulse" />
       ))}
     </div>
   );
@@ -67,7 +60,9 @@ function Interviewers() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Total Interviewers</p>
-                    <p className="text-2xl font-bold text-gray-900">{interviewers.length}</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {interviewers.length}
+                    </p>
                   </div>
                   <Users className="w-8 h-8 text-blue-500" />
                 </div>
@@ -79,7 +74,9 @@ function Interviewers() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-600">Active</p>
-                    <p className="text-2xl font-bold text-gray-900">{interviewers.length}</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {interviewers.length}
+                    </p>
                   </div>
                   <Users className="w-8 h-8 text-green-500" />
                 </div>
@@ -122,10 +119,7 @@ function Interviewers() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredInterviewers.map((interviewer) => (
-              <InterviewerCard
-                key={interviewer.id}
-                interviewer={interviewer}
-              />
+              <InterviewerCard key={interviewer.id} interviewer={interviewer} />
             ))}
           </div>
         )}

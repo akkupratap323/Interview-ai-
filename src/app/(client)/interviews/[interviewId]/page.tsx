@@ -6,12 +6,12 @@ import { Switch } from "@/components/ui/switch";
 import React, { useState, useEffect } from "react";
 import { useOrganization } from "@clerk/nextjs";
 import { useInterviews } from "@/contexts/interviews.context";
-import { 
-  Share2, 
-  Filter, 
-  Pencil, 
-  UserIcon, 
-  Eye, 
+import {
+  Share2,
+  Filter,
+  Pencil,
+  UserIcon,
+  Eye,
   Palette,
   Search,
   Calendar,
@@ -22,7 +22,7 @@ import {
   BarChart3,
   Settings,
   Download,
-  RefreshCw
+  RefreshCw,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRouter } from "next/navigation";
@@ -85,7 +85,8 @@ function InterviewHome({ params, searchParams }: Props) {
   const router = useRouter();
   const [isActive, setIsActive] = useState<boolean>(true);
   const [currentPlan, setCurrentPlan] = useState<string>("");
-  const [isGeneratingInsights, setIsGeneratingInsights] = useState<boolean>(false);
+  const [isGeneratingInsights, setIsGeneratingInsights] =
+    useState<boolean>(false);
   const [isViewed, setIsViewed] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [showColorPicker, setShowColorPicker] = useState<boolean>(false);
@@ -151,12 +152,14 @@ function InterviewHome({ params, searchParams }: Props) {
     const fetchResponses = async () => {
       try {
         console.log("🔍 Fetching responses for interview:", params.interviewId);
-        
-        const response = await fetch(`/api/get-responses?interviewId=${encodeURIComponent(params.interviewId)}`);
+
+        const response = await fetch(
+          `/api/get-responses?interviewId=${encodeURIComponent(params.interviewId)}`,
+        );
         const data = await response.json();
-        
+
         console.log("🔍 API response:", data);
-        
+
         if (response.ok && data.success) {
           console.log("🔍 Fetched responses:", data.count);
           setResponses(data.responses);
@@ -164,7 +167,7 @@ function InterviewHome({ params, searchParams }: Props) {
           console.error("🔍 Failed to fetch responses:", data.error);
           setResponses([]);
         }
-        
+
         setLoading(true);
       } catch (error) {
         console.error("🔍 Error fetching responses:", error);
@@ -282,24 +285,25 @@ function InterviewHome({ params, searchParams }: Props) {
     if (!responses) {
       return [];
     }
-    
+
     let filtered = responses;
-    
+
     // Filter by status
     if (filterStatus !== "ALL") {
       filtered = filtered.filter(
         (response) => response?.candidate_status === filterStatus,
       );
     }
-    
+
     // Filter by search term
     if (searchTerm) {
-      filtered = filtered.filter((response) =>
-        response.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        response.call_id.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (response) =>
+          response.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          response.call_id.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
-    
+
     return filtered;
   };
 
@@ -319,11 +323,23 @@ function InterviewHome({ params, searchParams }: Props) {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case CandidateStatus.SELECTED:
-        return <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">Selected</Badge>;
+        return (
+          <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">
+            Selected
+          </Badge>
+        );
       case CandidateStatus.POTENTIAL:
-        return <Badge className="bg-amber-100 text-amber-800 border-amber-200">Potential</Badge>;
+        return (
+          <Badge className="bg-amber-100 text-amber-800 border-amber-200">
+            Potential
+          </Badge>
+        );
       case CandidateStatus.NOT_SELECTED:
-        return <Badge className="bg-red-100 text-red-800 border-red-200">Not Selected</Badge>;
+        return (
+          <Badge className="bg-red-100 text-red-800 border-red-200">
+            Not Selected
+          </Badge>
+        );
       default:
         return <Badge variant="outline">Pending</Badge>;
     }
@@ -331,8 +347,8 @@ function InterviewHome({ params, searchParams }: Props) {
 
   if (loading) {
     return (
-      <LoaderWithText 
-        message="Loading Interview" 
+      <LoaderWithText
+        message="Loading Interview"
         description="Preparing your interview dashboard and response data"
       />
     );
@@ -347,7 +363,7 @@ function InterviewHome({ params, searchParams }: Props) {
             {/* Left Section - Interview Info */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
               <div className="flex items-center gap-3">
-                <div 
+                <div
                   className="w-3 h-3 rounded-full border-2 border-white shadow-lg"
                   style={{ backgroundColor: iconColor }}
                 />
@@ -355,11 +371,13 @@ function InterviewHome({ params, searchParams }: Props) {
                   {interview?.name}
                 </h1>
               </div>
-              
+
               <div className="flex items-center gap-4 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4" />
-                  <span className="font-medium">{responses?.length || 0} Candidates</span>
+                  <span className="font-medium">
+                    {responses?.length || 0} Candidates
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
@@ -427,7 +445,11 @@ function InterviewHome({ params, searchParams }: Props) {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => router.push(`/interviews/${params.interviewId}?edit=true`)}
+                        onClick={() =>
+                          router.push(
+                            `/interviews/${params.interviewId}?edit=true`,
+                          )
+                        }
                         className="hover:bg-orange-50 hover:border-orange-300"
                       >
                         <Pencil className="w-4 h-4" />
@@ -445,9 +467,11 @@ function InterviewHome({ params, searchParams }: Props) {
                         size="sm"
                         onClick={async () => {
                           try {
-                            const response = await fetch(`/api/get-responses?interviewId=${encodeURIComponent(params.interviewId)}`);
+                            const response = await fetch(
+                              `/api/get-responses?interviewId=${encodeURIComponent(params.interviewId)}`,
+                            );
                             const data = await response.json();
-                            
+
                             if (response.ok && data.success) {
                               setResponses(data.responses);
                             }
@@ -464,7 +488,7 @@ function InterviewHome({ params, searchParams }: Props) {
                   </Tooltip>
                 </TooltipProvider>
 
-                {process.env.NODE_ENV === 'development' && (
+                {process.env.NODE_ENV === "development" && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -486,7 +510,9 @@ function InterviewHome({ params, searchParams }: Props) {
               {/* Status Toggle */}
               <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-4 border-l border-gray-200">
                 {currentPlan === "free_trial_over" ? (
-                  <Badge variant="destructive" className="text-xs sm:text-sm">Inactive - Upgrade Required</Badge>
+                  <Badge variant="destructive" className="text-xs sm:text-sm">
+                    Inactive - Upgrade Required
+                  </Badge>
                 ) : (
                   <div className="flex items-center gap-2 sm:gap-3">
                     <span className="text-xs sm:text-sm font-medium text-gray-700 hidden sm:inline">
@@ -513,12 +539,14 @@ function InterviewHome({ params, searchParams }: Props) {
             <Card className="h-full border-0 shadow-xl">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg font-semibold">Candidates</CardTitle>
+                  <CardTitle className="text-lg font-semibold">
+                    Candidates
+                  </CardTitle>
                   <Badge variant="outline" className="bg-blue-50 text-blue-700">
                     {filterResponses().length}
                   </Badge>
                 </div>
-                
+
                 {/* Search and Filter */}
                 <div className="space-y-3 pt-2">
                   <div className="relative">
@@ -530,7 +558,7 @@ function InterviewHome({ params, searchParams }: Props) {
                       className="pl-10 bg-gray-50 border-gray-200 focus:bg-white"
                     />
                   </div>
-                  
+
                   <Select value={filterStatus} onValueChange={setFilterStatus}>
                     <SelectTrigger className="bg-gray-50 border-gray-200">
                       <Filter className="w-4 h-4 text-gray-400 mr-2" />
@@ -571,7 +599,7 @@ function InterviewHome({ params, searchParams }: Props) {
                   </Select>
                 </div>
               </CardHeader>
-              
+
               <CardContent className="p-0">
                 <ScrollArea className="h-[calc(100vh-320px)]">
                   {filterResponses().length > 0 ? (
@@ -585,13 +613,17 @@ function InterviewHome({ params, searchParams }: Props) {
                               : "bg-white border-gray-100 hover:border-gray-200"
                           }`}
                           onClick={() => {
-                            router.push(`/interviews/${params.interviewId}?call=${response.call_id}`);
+                            router.push(
+                              `/interviews/${params.interviewId}?call=${response.call_id}`,
+                            );
                             handleResponseClick(response);
                           }}
                         >
                           {/* Status Indicator */}
-                          <div className={`absolute left-0 top-4 bottom-4 w-1 rounded-r ${getStatusColor(response.candidate_status)}`} />
-                          
+                          <div
+                            className={`absolute left-0 top-4 bottom-4 w-1 rounded-r ${getStatusColor(response.candidate_status)}`}
+                          />
+
                           <div className="ml-3">
                             <div className="flex items-start justify-between">
                               <div className="flex-1 min-w-0">
@@ -603,14 +635,16 @@ function InterviewHome({ params, searchParams }: Props) {
                                     <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
                                   )}
                                 </div>
-                                
+
                                 <p className="text-xs text-gray-500 mb-2">
-                                  {formatTimestampToDateHHMM(String(response.created_at))}
+                                  {formatTimestampToDateHHMM(
+                                    String(response.created_at),
+                                  )}
                                 </p>
-                                
+
                                 {getStatusBadge(response.candidate_status)}
                               </div>
-                              
+
                               {/* Score Badge */}
                               {response.analytics?.overallScore && (
                                 <div className="flex-shrink-0 ml-2">
@@ -623,7 +657,9 @@ function InterviewHome({ params, searchParams }: Props) {
                                           </span>
                                         </div>
                                       </TooltipTrigger>
-                                      <TooltipContent>Overall Score</TooltipContent>
+                                      <TooltipContent>
+                                        Overall Score
+                                      </TooltipContent>
                                     </Tooltip>
                                   </TooltipProvider>
                                 </div>
@@ -639,13 +675,14 @@ function InterviewHome({ params, searchParams }: Props) {
                         <Users className="w-8 h-8 text-blue-500" />
                       </div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        {searchTerm || filterStatus !== "ALL" ? "No candidates found" : "No Interview Responses Yet"}
+                        {searchTerm || filterStatus !== "ALL"
+                          ? "No candidates found"
+                          : "No Interview Responses Yet"}
                       </h3>
                       <p className="text-gray-600 text-sm mb-4">
-                        {searchTerm || filterStatus !== "ALL" 
+                        {searchTerm || filterStatus !== "ALL"
                           ? "Try adjusting your search or filter criteria"
-                          : "Once candidates complete interviews, their analytics and insights will appear here."
-                        }
+                          : "Once candidates complete interviews, their analytics and insights will appear here."}
                       </p>
                       {!searchTerm && filterStatus === "ALL" && (
                         <div className="space-y-3">
@@ -657,7 +694,8 @@ function InterviewHome({ params, searchParams }: Props) {
                             Share Interview Link
                           </Button>
                           <p className="text-xs text-gray-500">
-                            Share the interview link to start collecting candidate responses and analytics
+                            Share the interview link to start collecting
+                            candidate responses and analytics
                           </p>
                         </div>
                       )}
@@ -683,7 +721,10 @@ function InterviewHome({ params, searchParams }: Props) {
                     ) : searchParams.edit ? (
                       <EditInterview interview={interview} />
                     ) : (
-                      <SummaryInfo responses={responses} interview={interview} />
+                      <SummaryInfo
+                        responses={responses}
+                        interview={interview}
+                      />
                     )}
                   </>
                 )}
@@ -708,25 +749,25 @@ function InterviewHome({ params, searchParams }: Props) {
             color={themeColor}
             styles={{
               default: {
-                picker: { 
+                picker: {
                   width: "100%",
                   boxShadow: "none",
                   border: "1px solid #e5e7eb",
-                  borderRadius: "12px"
+                  borderRadius: "12px",
                 },
               },
             }}
             onChange={handleColorChange}
           />
           <div className="flex gap-3 mt-6">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => setShowColorPicker(false)}
               className="flex-1"
             >
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={applyColorChange}
               className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
             >
@@ -769,10 +810,14 @@ function InterviewHome({ params, searchParams }: Props) {
                     <Button
                       onClick={async () => {
                         try {
-                          const response = await fetch(`/api/debug-interview-responses?interviewId=${params.interviewId}`);
+                          const response = await fetch(
+                            `/api/debug-interview-responses?interviewId=${params.interviewId}`,
+                          );
                           const data = await response.json();
                           console.log("Debug - Database responses:", data);
-                          alert(`Found ${data.totalResponses} responses in database. Check console for details.`);
+                          alert(
+                            `Found ${data.totalResponses} responses in database. Check console for details.`,
+                          );
                         } catch (error) {
                           console.error("Debug error:", error);
                           alert("Debug failed - check console");
@@ -789,13 +834,19 @@ function InterviewHome({ params, searchParams }: Props) {
                         const callId = prompt("Enter Call ID to debug:");
                         if (!callId) return;
                         try {
-                          const response = await fetch(`/api/debug-call-id?callId=${encodeURIComponent(callId)}`);
+                          const response = await fetch(
+                            `/api/debug-call-id?callId=${encodeURIComponent(callId)}`,
+                          );
                           const data = await response.json();
                           console.log("Debug call ID result:", data);
                           if (data.exists) {
-                            alert(`Call ID EXISTS! Response ID: ${data.response.id}`);
+                            alert(
+                              `Call ID EXISTS! Response ID: ${data.response.id}`,
+                            );
                           } else {
-                            alert(`Call ID NOT FOUND. Similar: ${data.similarResponses.length}`);
+                            alert(
+                              `Call ID NOT FOUND. Similar: ${data.similarResponses.length}`,
+                            );
                           }
                         } catch (error) {
                           console.error("Debug call ID error:", error);
@@ -822,20 +873,27 @@ function InterviewHome({ params, searchParams }: Props) {
                     <Button
                       onClick={async () => {
                         try {
-                          const response = await fetch('/api/test-complete-flow', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                              interviewId: params.interviewId,
-                              email: 'test@example.com',
-                              name: 'Test User'
-                            })
-                          });
+                          const response = await fetch(
+                            "/api/test-complete-flow",
+                            {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                interviewId: params.interviewId,
+                                email: "test@example.com",
+                                name: "Test User",
+                              }),
+                            },
+                          );
                           const data = await response.json();
                           if (data.success) {
-                            alert("Test response created! Check the responses list.");
+                            alert(
+                              "Test response created! Check the responses list.",
+                            );
                             // Refresh responses
-                            const refreshResponse = await fetch(`/api/get-responses?interviewId=${encodeURIComponent(params.interviewId)}`);
+                            const refreshResponse = await fetch(
+                              `/api/get-responses?interviewId=${encodeURIComponent(params.interviewId)}`,
+                            );
                             const refreshData = await refreshResponse.json();
                             if (refreshResponse.ok && refreshData.success) {
                               setResponses(refreshData.responses);
@@ -857,14 +915,21 @@ function InterviewHome({ params, searchParams }: Props) {
                     <Button
                       onClick={async () => {
                         try {
-                          const response = await fetch('/api/create-test-user', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ email: 'testuser@example.com' })
-                          });
+                          const response = await fetch(
+                            "/api/create-test-user",
+                            {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                email: "testuser@example.com",
+                              }),
+                            },
+                          );
                           const data = await response.json();
                           if (data.success) {
-                            alert(`User ${data.user.existed ? 'exists' : 'created'}: ${data.user.email}`);
+                            alert(
+                              `User ${data.user.existed ? "exists" : "created"}: ${data.user.email}`,
+                            );
                           } else {
                             alert(`User creation failed: ${data.error}`);
                           }
@@ -885,7 +950,10 @@ function InterviewHome({ params, searchParams }: Props) {
             </div>
 
             <div className="text-center">
-              <Button onClick={() => setShowAdminPanel(false)} variant="outline">
+              <Button
+                onClick={() => setShowAdminPanel(false)}
+                variant="outline"
+              >
                 Close Admin Panel
               </Button>
             </div>

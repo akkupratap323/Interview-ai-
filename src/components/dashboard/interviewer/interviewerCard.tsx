@@ -5,14 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import Modal from "@/components/dashboard/Modal";
 import { Interviewer } from "@/types/interviewer";
 import InterviewerDetailsModal from "@/components/dashboard/interviewer/interviewerDetailsModal";
-import { 
-  Star, 
-  Users, 
-  Award, 
-  Sparkles, 
+import {
+  Star,
+  Users,
+  Award,
+  Sparkles,
   Eye,
   MessageSquare,
-  TrendingUp
+  TrendingUp,
 } from "lucide-react";
 
 interface Props {
@@ -33,23 +33,23 @@ const InterviewerCard = ({ interviewer }: Props) => {
           {/* Image Section with Overlay */}
           <div className="relative w-full h-48 overflow-hidden rounded-t-2xl">
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
-            
+
             {/* Loading Skeleton */}
             {!imageLoaded && (
               <div className="absolute inset-0 bg-gradient-to-br from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
             )}
-            
+
             <Image
               src={interviewer.image}
               alt={`${interviewer.name} - AI Interviewer`}
               fill
               className={`object-cover object-center transition-all duration-700 group-hover:scale-110 ${
-                imageLoaded ? 'opacity-100' : 'opacity-0'
+                imageLoaded ? "opacity-100" : "opacity-0"
               }`}
               onLoad={() => setImageLoaded(true)}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
-            
+
             {/* Status Badge */}
             <div className="absolute top-4 left-4 z-20">
               <Badge className="bg-emerald-500/90 text-white border-0 backdrop-blur-sm">
@@ -57,7 +57,7 @@ const InterviewerCard = ({ interviewer }: Props) => {
                 Active
               </Badge>
             </div>
-            
+
             {/* Rating Badge */}
             <div className="absolute top-4 right-4 z-20">
               <div className="bg-white/20 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center gap-1">
@@ -65,9 +65,6 @@ const InterviewerCard = ({ interviewer }: Props) => {
                 <span className="text-white text-xs font-medium">4.9</span>
               </div>
             </div>
-            
-          
-           
           </div>
 
           {/* Content Section */}
@@ -79,7 +76,8 @@ const InterviewerCard = ({ interviewer }: Props) => {
                   {interviewer.name}
                 </h3>
                 <p className="text-sm text-gray-600 line-clamp-2">
-                  {interviewer.description || "Specialized AI interviewer with advanced evaluation capabilities"}
+                  {interviewer.description ||
+                    "Specialized AI interviewer with advanced evaluation capabilities"}
                 </p>
               </div>
 
@@ -100,9 +98,9 @@ const InterviewerCard = ({ interviewer }: Props) => {
               {/* Skills Tags */}
               <div className="flex flex-wrap gap-1 mb-4">
                 {["AI", "Datascience", "Fullstack"].map((skill, index) => (
-                  <Badge 
+                  <Badge
                     key={index}
-                    variant="secondary" 
+                    variant="secondary"
                     className="text-xs px-2 py-1 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors"
                   >
                     {skill}
@@ -116,14 +114,18 @@ const InterviewerCard = ({ interviewer }: Props) => {
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1">
                   <Award className="w-4 h-4 text-orange-500" />
-                  <span className="text-xs text-gray-600 font-medium">Expert</span>
+                  <span className="text-xs text-gray-600 font-medium">
+                    Expert
+                  </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <MessageSquare className="w-4 h-4 text-purple-500" />
-                  <span className="text-xs text-gray-600 font-medium">Conversational</span>
+                  <span className="text-xs text-gray-600 font-medium">
+                    Conversational
+                  </span>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-1 text-indigo-600 group-hover:text-indigo-700 transition-colors">
                 <Eye className="w-4 h-4" />
                 <span className="text-sm font-medium">View Details</span>
@@ -133,7 +135,7 @@ const InterviewerCard = ({ interviewer }: Props) => {
 
           {/* Hover Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-indigo-600/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl" />
-          
+
           {/* Sparkle Effect */}
           <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-200">
             <Sparkles className="w-5 h-5 text-yellow-400 animate-pulse" />

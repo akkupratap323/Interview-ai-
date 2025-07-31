@@ -8,23 +8,23 @@ const getAllInterviewers = async (clientId: string = "") => {
         OR: [
           { user_id: null }, // Global interviewers
           { user_id: clientId }, // User-specific interviewers
-        ]
-      }
+        ],
+      },
     });
-    console.log('Fetched interviewers from database:', interviewers.length);
+    console.log("Fetched interviewers from database:", interviewers.length);
     return interviewers.map((interviewer) => ({
       ...interviewer,
       id: interviewer.id, // Keep as string, don't convert to BigInt
       created_at: interviewer.createdAt,
-      user_id: interviewer.user_id || '',
-      name: interviewer.name || '',
-      image: interviewer.image || '',
-      description: interviewer.description || '',
-      audio: interviewer.audio || '',
-      agent_id: interviewer.agent_id || '',
+      user_id: interviewer.user_id || "",
+      name: interviewer.name || "",
+      image: interviewer.image || "",
+      description: interviewer.description || "",
+      audio: interviewer.audio || "",
+      agent_id: interviewer.agent_id || "",
     }));
   } catch (error) {
-    console.log('Error fetching interviewers:', error);
+    console.log("Error fetching interviewers:", error);
     return [];
   }
 };
@@ -67,12 +67,12 @@ const getInterviewer = async (interviewerId: string) => {
       ...interviewer,
       id: interviewer.id, // Keep as string, don't convert to BigInt
       created_at: interviewer.createdAt,
-      user_id: interviewer.user_id || '',
-      name: interviewer.name || '',
-      image: interviewer.image || '',
-      description: interviewer.description || '',
-      audio: interviewer.audio || '',
-      agent_id: interviewer.agent_id || '',
+      user_id: interviewer.user_id || "",
+      name: interviewer.name || "",
+      image: interviewer.image || "",
+      description: interviewer.description || "",
+      audio: interviewer.audio || "",
+      agent_id: interviewer.agent_id || "",
     };
   } catch (error) {
     console.error("Error fetching interviewer:", error);

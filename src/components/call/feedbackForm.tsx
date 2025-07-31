@@ -22,14 +22,15 @@ export function FeedbackForm({ onSubmit, email }: FeedbackFormProps) {
 
   const handleSubmit = () => {
     if (satisfaction !== null || feedback.trim() !== "") {
-      const satisfactionIndex = Object.values(SatisfactionLevel).indexOf(satisfaction);
+      const satisfactionIndex =
+        Object.values(SatisfactionLevel).indexOf(satisfaction);
       console.log("🎯 Submitting feedback:", {
         satisfaction: satisfactionIndex,
         feedback,
         email,
-        satisfactionEmoji: satisfaction
+        satisfactionEmoji: satisfaction,
       });
-      
+
       onSubmit({
         satisfaction: satisfactionIndex,
         feedback: feedback.trim() || null,

@@ -68,51 +68,72 @@ function InterviewInterface({ params }: Props) {
 
   useEffect(() => {
     const fetchinterview = async () => {
-      console.log("🎬 Interview Page - Starting fetch for interviewId:", params.interviewId);
+      console.log(
+        "🎬 Interview Page - Starting fetch for interviewId:",
+        params.interviewId,
+      );
       console.log("🎬 Interview Page - Current URL params:", params);
-      
+
       try {
         // Method 1: Try context
-        console.log("🎬 Interview Page - Method 1: Trying context getInterviewById");
+        console.log(
+          "🎬 Interview Page - Method 1: Trying context getInterviewById",
+        );
         const response = await getInterviewById(params.interviewId);
         console.log("🎬 Interview Page - Context response:", response);
-        
+
         if (response) {
           console.log("✅ Interview Page - Found via context:", response.name);
           setInterview(response);
-          document.title = response.name || 'Interview';
+          document.title = response.name || "Interview";
           return;
         }
-        
+
         // Method 2: Try direct service call
         console.log("🎬 Interview Page - Method 2: Trying direct service");
-        const { InterviewService } = await import("@/services/interviews.service");
-        const directResponse = await InterviewService.getInterviewById(params.interviewId);
-        console.log("🎬 Interview Page - Direct service response:", directResponse);
-        
+        const { InterviewService } = await import(
+          "@/services/interviews.service"
+        );
+        const directResponse = await InterviewService.getInterviewById(
+          params.interviewId,
+        );
+        console.log(
+          "🎬 Interview Page - Direct service response:",
+          directResponse,
+        );
+
         if (directResponse) {
-          console.log("✅ Interview Page - Found via direct service:", directResponse.name);
+          console.log(
+            "✅ Interview Page - Found via direct service:",
+            directResponse.name,
+          );
           setInterview(directResponse);
-          document.title = directResponse.name || 'Interview';
+          document.title = directResponse.name || "Interview";
           return;
         }
-        
+
         // Method 3: Try API call
         console.log("🎬 Interview Page - Method 3: Trying API call");
-        const apiResponse = await fetch(`/api/test-interview-by-id?id=${encodeURIComponent(params.interviewId)}`);
+        const apiResponse = await fetch(
+          `/api/test-interview-by-id?id=${encodeURIComponent(params.interviewId)}`,
+        );
         const apiData = await apiResponse.json();
         console.log("🎬 Interview Page - API response:", apiData);
-        
+
         if (apiData.success && apiData.interview) {
-          console.log("✅ Interview Page - Found via API:", apiData.interview.name);
+          console.log(
+            "✅ Interview Page - Found via API:",
+            apiData.interview.name,
+          );
           setInterview(apiData.interview);
-          document.title = apiData.interview.name || 'Interview';
+          document.title = apiData.interview.name || "Interview";
           return;
         }
-        
-        console.log("❌ Interview Page - All methods failed, showing invalid URL");
+
+        console.log(
+          "❌ Interview Page - All methods failed, showing invalid URL",
+        );
         setInterviewNotFound(true);
-        
       } catch (error) {
         console.error("❌ Interview Page - Error:", error);
         setInterviewNotFound(true);

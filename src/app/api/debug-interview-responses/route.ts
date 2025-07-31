@@ -4,12 +4,15 @@ import { db } from "@/lib/db";
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const interviewId = searchParams.get('interviewId');
+    const interviewId = searchParams.get("interviewId");
 
     if (!interviewId) {
-      return NextResponse.json({ 
-        error: "Interview ID is required" 
-      }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: "Interview ID is required",
+        },
+        { status: 400 },
+      );
     }
 
     console.log("🔍 Debug - Checking responses for interview:", interviewId);
@@ -19,12 +22,12 @@ export async function GET(req: NextRequest) {
       where: {
         interview_id: interviewId,
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: "desc" },
     });
 
     console.log("🔍 Debug - Found responses:", responses.length);
 
-    const responsesSummary = responses.map(r => ({
+    const responsesSummary = responses.map((r) => ({
       call_id: r.call_id,
       email: r.email,
       name: r.name,
@@ -35,21 +38,23 @@ export async function GET(req: NextRequest) {
       created_at: r.createdAt,
       updated_at: r.updatedAt,
       duration: r.duration,
-      tab_switch_count: r.tab_switch_count
+      tab_switch_count: r.tab_switch_count,
     }));
 
     return NextResponse.json({
       interviewId: interviewId,
       totalResponses: responses.length,
       responses: responsesSummary,
-      rawCount: responses.length
+      rawCount: responses.length,
     });
-
   } catch (error) {
     console.error("🔍 Debug - Error:", error);
-    return NextResponse.json({ 
-      error: "Debug failed", 
-      details: error instanceof Error ? error.message : "Unknown error" 
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Debug failed",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
+    );
   }
 }

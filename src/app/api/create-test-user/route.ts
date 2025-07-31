@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 export async function POST(req: NextRequest) {
   try {
     const { email } = await req.json();
-    
+
     if (!email) {
       return NextResponse.json({ error: "Email is required" }, { status: 400 });
     }
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
     // Check if user already exists
     const existingUser = await db.user.findUnique({
-      where: { email: email }
+      where: { email: email },
     });
 
     if (existingUser) {
@@ -23,8 +23,8 @@ export async function POST(req: NextRequest) {
         user: {
           id: existingUser.id,
           email: existingUser.email,
-          existed: true
-        }
+          existed: true,
+        },
       });
     }
 
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       data: {
         id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         email: email,
-      }
+      },
     });
 
     console.log("👤 Created test user:", newUser.id);
@@ -44,15 +44,17 @@ export async function POST(req: NextRequest) {
       user: {
         id: newUser.id,
         email: newUser.email,
-        existed: false
-      }
+        existed: false,
+      },
     });
-
   } catch (error) {
     console.error("👤 Error creating test user:", error);
-    return NextResponse.json({
-      error: "Failed to create test user",
-      details: error instanceof Error ? error.message : "Unknown error"
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: "Failed to create test user",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
+    );
   }
 }

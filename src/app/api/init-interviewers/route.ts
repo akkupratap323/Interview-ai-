@@ -6,14 +6,14 @@ export async function POST(request: NextRequest) {
   try {
     // Check if default interviewers already exist
     const existingInterviewers = await InterviewerService.getAllInterviewers();
-    
+
     if (existingInterviewers.length > 0) {
       return NextResponse.json(
-        { 
+        {
           message: "Default interviewers already exist",
-          count: existingInterviewers.length 
+          count: existingInterviewers.length,
         },
-        { status: 200 }
+        { status: 200 },
       );
     }
 
@@ -33,15 +33,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         message: "Default interviewers created successfully",
-        interviewers: [lisaInterviewer, bobInterviewer]
+        interviewers: [lisaInterviewer, bobInterviewer],
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error initializing default interviewers:", error);
     return NextResponse.json(
       { error: "Failed to initialize default interviewers" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

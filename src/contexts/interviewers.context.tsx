@@ -34,27 +34,29 @@ export function InterviewerProvider({ children }: InterviewerProviderProps) {
   const fetchInterviewers = async () => {
     try {
       setInterviewersLoading(true);
-      console.log('Fetching interviewers for user:', user?.id);
-      
-      const response = await fetch('/api/interviewers', {
-        method: 'GET',
+      console.log("Fetching interviewers for user:", user?.id);
+
+      const response = await fetch("/api/interviewers", {
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
-      console.log('Fetched interviewers:', data.interviewers);
-      console.log('Number of interviewers:', data.interviewers?.length || 0);
-      
-      setInterviewers(Array.isArray(data.interviewers) ? data.interviewers : []);
+
+      console.log("Fetched interviewers:", data.interviewers);
+      console.log("Number of interviewers:", data.interviewers?.length || 0);
+
+      setInterviewers(
+        Array.isArray(data.interviewers) ? data.interviewers : [],
+      );
     } catch (error) {
-      console.error('Error fetching interviewers:', error);
+      console.error("Error fetching interviewers:", error);
       setInterviewers([]); // Set empty array on error
     } finally {
       setInterviewersLoading(false);
@@ -63,20 +65,20 @@ export function InterviewerProvider({ children }: InterviewerProviderProps) {
 
   const createInterviewer = async (payload: any) => {
     try {
-      const response = await fetch('/api/create-interviewer', {
-        method: 'GET', // This endpoint uses GET method
+      const response = await fetch("/api/create-interviewer", {
+        method: "GET", // This endpoint uses GET method
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       await fetchInterviewers();
     } catch (error) {
-      console.error('Error creating interviewer:', error);
+      console.error("Error creating interviewer:", error);
       throw error;
     }
   };

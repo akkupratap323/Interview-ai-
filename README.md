@@ -5,7 +5,7 @@ Interview AI is a modern, AI-powered interview platform that helps organizations
 ## Screenshots
 
 | ![Image 1](./public/image1.png) | ![Image 2](./public/image2.png) |
-|:------------------------------:|:------------------------------:|
+| :-----------------------------: | :-----------------------------: |
 | ![Image 3](./public/image3.png) | ![Image 4](./public/image4.png) |
 | ![Image 5](./public/image5.png) | ![Image 6](./public/image6.png) |
 | ![Image 7](./public/image7.png) | ![Image 8](./public/image8.png) |

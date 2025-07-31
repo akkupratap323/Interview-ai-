@@ -5,7 +5,7 @@ import { FeedbackData } from "@/types/response";
 export async function POST(req: NextRequest) {
   try {
     console.log("🎯 API - submit-feedback request received");
-    
+
     const body = await req.json();
     console.log("🎯 API - Request body:", body);
 
@@ -13,15 +13,18 @@ export async function POST(req: NextRequest) {
     if (!body.interview_id) {
       return NextResponse.json(
         { error: "Interview ID is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Validate that at least satisfaction or feedback is provided
-    if (body.satisfaction === null && (!body.feedback || body.feedback.trim() === "")) {
+    if (
+      body.satisfaction === null &&
+      (!body.feedback || body.feedback.trim() === "")
+    ) {
       return NextResponse.json(
         { error: "Either satisfaction rating or feedback text is required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -44,22 +47,23 @@ export async function POST(req: NextRequest) {
         message: "Feedback submitted successfully",
         id: result.id,
       },
-      { status: 201 }
+      { status: 201 },
     );
-
   } catch (error) {
     console.error("🎯 API - Error submitting feedback:", error);
-    
+
     // Handle specific Prisma errors or other database errors
-    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-    
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+
     return NextResponse.json(
       {
         success: false,
         error: "Failed to submit feedback",
-        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+        details:
+          process.env.NODE_ENV === "development" ? errorMessage : undefined,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

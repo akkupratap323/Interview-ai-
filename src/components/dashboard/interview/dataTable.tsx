@@ -268,10 +268,10 @@ function DataTable({ data, interviewId }: DataTableProps) {
                       score >= 8
                         ? "bg-emerald-500"
                         : score >= 6
-                        ? "bg-blue-500"
-                        : score >= 4
-                        ? "bg-amber-500"
-                        : "bg-red-500"
+                          ? "bg-blue-500"
+                          : score >= 4
+                            ? "bg-amber-500"
+                            : "bg-red-500"
                     }`}
                     style={{ width: `${(score / 10) * 100}%` }}
                   />
@@ -362,8 +362,8 @@ function DataTable({ data, interviewId }: DataTableProps) {
             No candidate data available
           </h3>
           <p className="text-gray-600 text-center max-w-md">
-            Once candidates complete their interviews, their performance data will
-            appear here.
+            Once candidates complete their interviews, their performance data
+            will appear here.
           </p>
         </CardContent>
       </Card>
@@ -378,8 +378,12 @@ function DataTable({ data, interviewId }: DataTableProps) {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-blue-600">Total Candidates</p>
-                <p className="text-2xl font-bold text-blue-900">{data.length}</p>
+                <p className="text-sm font-medium text-blue-600">
+                  Total Candidates
+                </p>
+                <p className="text-2xl font-bold text-blue-900">
+                  {data.length}
+                </p>
               </div>
               <User className="w-8 h-8 text-blue-500" />
             </div>
@@ -399,8 +403,7 @@ function DataTable({ data, interviewId }: DataTableProps) {
                         data.reduce(
                           (sum, d) => sum + (d.overallScore || 0),
                           0,
-                        ) /
-                        data.filter((d) => d.overallScore).length
+                        ) / data.filter((d) => d.overallScore).length
                       ).toFixed(1)
                     : "N/A"}
                 </p>
@@ -423,8 +426,7 @@ function DataTable({ data, interviewId }: DataTableProps) {
                         data.reduce(
                           (sum, d) => sum + (d.communicationScore || 0),
                           0,
-                        ) /
-                        data.filter((d) => d.communicationScore).length
+                        ) / data.filter((d) => d.communicationScore).length
                       ).toFixed(1)
                     : "N/A"}
                 </p>
@@ -442,7 +444,10 @@ function DataTable({ data, interviewId }: DataTableProps) {
             <Table>
               <TableHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="border-b border-gray-200">
+                  <TableRow
+                    key={headerGroup.id}
+                    className="border-b border-gray-200"
+                  >
                     {headerGroup.headers.map((header) => (
                       <TableHead
                         key={header.id}
@@ -473,11 +478,11 @@ function DataTable({ data, interviewId }: DataTableProps) {
                     onMouseLeave={handleMouseLeave}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        className="px-6 py-4 align-top"
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <TableCell key={cell.id} className="px-6 py-4 align-top">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>

@@ -12,13 +12,13 @@ import { useInterviews } from "@/contexts/interviews.context";
 import Modal from "@/components/dashboard/Modal";
 import CreateInterviewCard from "@/components/dashboard/interview/createInterviewCard";
 import InterviewCard from "@/components/dashboard/interview/interviewCard";
-import { 
-  Plus, 
+import {
+  Plus,
   Search,
   MessageSquare,
   Users,
   Activity,
-  TrendingUp
+  TrendingUp,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -33,7 +33,8 @@ function Interviews() {
   const { organization } = useOrganization();
   const [loading, setLoading] = useState<boolean>(false);
   const [currentPlan, setCurrentPlan] = useState<string>("");
-  const [allowedResponsesCount, setAllowedResponsesCount] = useState<number>(10);
+  const [allowedResponsesCount, setAllowedResponsesCount] =
+    useState<number>(10);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
@@ -52,10 +53,10 @@ function Interviews() {
 
   const copyToClipboard = async (interview: any) => {
     try {
-      const interviewLink = interview.readable_slug 
-        ? `${base_url}/call/${interview.readable_slug}` 
+      const interviewLink = interview.readable_slug
+        ? `${base_url}/call/${interview.readable_slug}`
         : `${base_url}/call/${interview.id}`;
-      
+
       if (!navigator.clipboard) {
         // Fallback for older browsers
         const textArea = document.createElement("textarea");
@@ -63,22 +64,21 @@ function Interviews() {
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
-        document.execCommand('copy');
+        document.execCommand("copy");
         document.body.removeChild(textArea);
         toast.success("Interview link copied!");
         return;
       }
-      
+
       await navigator.clipboard.writeText(interviewLink);
       toast.success("Interview link copied to clipboard!");
-      
     } catch (error) {
       toast.error("Failed to copy link. Please try again.");
     }
   };
 
-  const filteredInterviews = interviews.filter(interview =>
-    interview.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredInterviews = interviews.filter((interview) =>
+    interview.name?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Clean filtered interviews without debug logging
@@ -109,11 +109,14 @@ function Interviews() {
   useEffect(() => {
     const fetchStats = async () => {
       if (!organization) return;
-      
+
       try {
-        const responseCount = await ResponseService.getResponseCountByOrganizationId(organization.id);
+        const responseCount =
+          await ResponseService.getResponseCountByOrganizationId(
+            organization.id,
+          );
         setTotalResponses(responseCount);
-        
+
         if (currentPlan === "free" && responseCount >= allowedResponsesCount) {
           setCurrentPlan("free_trial_over");
           await InterviewService.deactivateInterviewsByOrgId(organization.id);
@@ -159,10 +162,11 @@ function Interviews() {
         Welcome to AI Interviews!
       </h3>
       <p className="text-gray-600 mb-8 max-w-md mx-auto">
-        Get started by creating your first AI-powered interview. Our intelligent system will help you screen candidates effectively.
+        Get started by creating your first AI-powered interview. Our intelligent
+        system will help you screen candidates effectively.
       </p>
       <div className="space-y-4">
-        <Button 
+        <Button
           onClick={handleCreateInterview}
           className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-200"
           disabled={currentPlan === "free_trial_over"}
@@ -184,11 +188,15 @@ function Interviews() {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">AI Interviews</h1>
-              <p className="text-gray-600 mt-1 text-sm sm:text-base">Create, manage, and analyze your AI-powered interviews</p>
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                AI Interviews
+              </h1>
+              <p className="text-gray-600 mt-1 text-sm sm:text-base">
+                Create, manage, and analyze your AI-powered interviews
+              </p>
             </div>
             <div className="flex gap-2 sm:gap-3 flex-wrap">
-              <Button 
+              <Button
                 onClick={handleCreateInterview}
                 className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all duration-200 flex-1 sm:flex-none"
                 disabled={currentPlan === "free_trial_over"}
@@ -197,8 +205,8 @@ function Interviews() {
                 <span className="hidden sm:inline">Create Interview</span>
                 <span className="sm:hidden">Create</span>
               </Button>
-              {process.env.NODE_ENV === 'development' && (
-                <Button 
+              {process.env.NODE_ENV === "development" && (
+                <Button
                   onClick={() => {
                     fetchInterviews();
                     toast.success("Refreshed!");
@@ -221,8 +229,12 @@ function Interviews() {
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-medium text-blue-700">Total Interviews</p>
-                          <p className="text-3xl font-bold text-blue-900 mt-1">{interviews.length}</p>
+                          <p className="text-sm font-medium text-blue-700">
+                            Total Interviews
+                          </p>
+                          <p className="text-3xl font-bold text-blue-900 mt-1">
+                            {interviews.length}
+                          </p>
                         </div>
                         <div className="p-3 bg-blue-500 rounded-full">
                           <MessageSquare className="w-6 h-6 text-white" />
@@ -244,9 +256,11 @@ function Interviews() {
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-medium text-green-700">Active</p>
+                          <p className="text-sm font-medium text-green-700">
+                            Active
+                          </p>
                           <p className="text-3xl font-bold text-green-900 mt-1">
-                            {interviews.filter(i => i.is_active).length}
+                            {interviews.filter((i) => i.is_active).length}
                           </p>
                         </div>
                         <div className="p-3 bg-green-500 rounded-full">
@@ -269,8 +283,12 @@ function Interviews() {
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-medium text-purple-700">Responses</p>
-                          <p className="text-3xl font-bold text-purple-900 mt-1">{totalResponses}</p>
+                          <p className="text-sm font-medium text-purple-700">
+                            Responses
+                          </p>
+                          <p className="text-3xl font-bold text-purple-900 mt-1">
+                            {totalResponses}
+                          </p>
                         </div>
                         <div className="p-3 bg-purple-500 rounded-full">
                           <Users className="w-6 h-6 text-white" />
@@ -280,7 +298,9 @@ function Interviews() {
                   </Card>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Total candidate responses received across all interviews</p>
+                  <p>
+                    Total candidate responses received across all interviews
+                  </p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -292,8 +312,12 @@ function Interviews() {
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-medium text-orange-700">Completion Rate</p>
-                          <p className="text-3xl font-bold text-orange-900 mt-1">94%</p>
+                          <p className="text-sm font-medium text-orange-700">
+                            Completion Rate
+                          </p>
+                          <p className="text-3xl font-bold text-orange-900 mt-1">
+                            94%
+                          </p>
                         </div>
                         <div className="p-3 bg-orange-500 rounded-full">
                           <TrendingUp className="w-6 h-6 text-white" />
@@ -347,7 +371,10 @@ function Interviews() {
 
         {/* Create Interview Modal */}
         {isCreateModalOpen && (
-          <Modal open={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)}>
+          <Modal
+            open={isCreateModalOpen}
+            onClose={() => setIsCreateModalOpen(false)}
+          >
             <div className="w-full max-w-2xl">
               <CreateInterviewCard />
             </div>
@@ -365,10 +392,13 @@ function Interviews() {
                 Upgrade to Pro
               </h2>
               <p className="text-gray-600 mb-6">
-                You've reached your free trial limit. Upgrade to continue creating interviews.
+                You've reached your free trial limit. Upgrade to continue
+                creating interviews.
               </p>
               <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <p className="text-sm text-gray-700 mb-2">Contact us to upgrade:</p>
+                <p className="text-sm text-gray-700 mb-2">
+                  Contact us to upgrade:
+                </p>
                 <a
                   href="mailto:founders@Interview-up.co"
                   className="text-blue-600 hover:text-blue-700 font-medium"

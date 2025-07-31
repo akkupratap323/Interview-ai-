@@ -59,18 +59,20 @@ export default function RootLayout({
             <div className="flex h-screen">
               {!pathname.includes("/sign-in") &&
                 !pathname.includes("/sign-up") && <SideMenu />}
-              
-              <div className={cn(
-                "flex-1 flex flex-col overflow-hidden",
-                !pathname.includes("/sign-in") && !pathname.includes("/sign-up") 
-                  ? "ml-16" : ""
-              )}>
+
+              <div
+                className={cn(
+                  "flex-1 flex flex-col overflow-hidden",
+                  !pathname.includes("/sign-in") &&
+                    !pathname.includes("/sign-up")
+                    ? "ml-16"
+                    : "",
+                )}
+              >
                 {!pathname.includes("/sign-in") &&
                   !pathname.includes("/sign-up") && <Navbar />}
-                
-                <main className="flex-1 overflow-auto">
-                  {children}
-                </main>
+
+                <main className="flex-1 overflow-auto">{children}</main>
               </div>
             </div>
             <Toaster />

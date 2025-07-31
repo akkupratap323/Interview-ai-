@@ -8,15 +8,22 @@ export async function POST(req: NextRequest) {
     if (!interviewId || !email) {
       return NextResponse.json(
         { error: "Interview ID and email are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    console.log("🔍 Checking email eligibility for:", email, "in interview:", interviewId);
+    console.log(
+      "🔍 Checking email eligibility for:",
+      email,
+      "in interview:",
+      interviewId,
+    );
 
     const oldUserEmails: string[] = (
       await ResponseService.getAllEmails(interviewId)
-    ).map((item: any) => item.email || '').filter((email: string) => email !== '');
+    )
+      .map((item: any) => item.email || "")
+      .filter((email: string) => email !== "");
 
     console.log("🔍 Found existing emails:", oldUserEmails.length);
 
@@ -26,12 +33,11 @@ export async function POST(req: NextRequest) {
       isOldUser,
       existingEmailCount: oldUserEmails.length,
     });
-
   } catch (error) {
     console.error("🔍 Error checking email eligibility:", error);
     return NextResponse.json(
       { error: "Failed to check email eligibility" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
