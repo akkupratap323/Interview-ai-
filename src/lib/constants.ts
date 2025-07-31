@@ -24,7 +24,7 @@ export const INTERVIEWERS = {
     exploration: 10,
     empathy: 7,
     speed: 5,
-    image: "/interviewers/Lisa.pn",
+    image: "/interviewers/Lisa.png",
     description:
       "Hi! I'm Lisa, an enthusiastic and empathetic interviewer who loves to explore. With a perfect balance of empathy and rapport, I delve deep into conversations while maintaining a steady pace. Let's embark on this journey together and uncover meaningful insights!",
     audio: "Lisa.wav",

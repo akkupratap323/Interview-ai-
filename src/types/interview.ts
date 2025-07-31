@@ -13,14 +13,14 @@ export interface InterviewBase {
   user_id: string;
   organization_id: string;
   name: string;
-  interviewer_id: bigint;
+  interviewer_id: string;
   objective: string;
   question_count: number;
   time_duration: string;
   is_anonymous: boolean;
   questions: Question[];
   description: string;
-  response_count: bigint;
+  response_count: number;
 }
 
 export interface InterviewDetails {

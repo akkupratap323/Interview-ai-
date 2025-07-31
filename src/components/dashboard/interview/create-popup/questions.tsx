@@ -9,6 +9,7 @@ import QuestionCard from "@/components/dashboard/interview/create-popup/question
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { ChevronLeft } from "lucide-react";
+import { toast } from "sonner";
 
 interface Props {
   interviewData: InterviewBase;
@@ -66,29 +67,66 @@ function QuestionsPopup({ interviewData, setProceed, setOpen }: Props) {
 
   const onSave = async () => {
     try {
+      setIsClicked(true);
+      
       interviewData.user_id = user?.id || "";
       interviewData.organization_id = organization?.id || "";
 
       interviewData.questions = questions;
       interviewData.description = description;
 
-      // Convert BigInts to strings if necessary
+      // Sanitize interview data for API
       const sanitizedInterviewData = {
         ...interviewData,
-        interviewer_id: interviewData.interviewer_id.toString(),
-        response_count: interviewData.response_count.toString(),
+        interviewer_id: interviewData.interviewer_id,
+        response_count: Number(interviewData.response_count) || 0,
         logo_url: organization?.imageUrl || "",
+        question_count: Number(interviewData.question_count) || 0,
+        is_anonymous: Boolean(interviewData.is_anonymous),
       };
+
+      console.log("Creating interview with data:", sanitizedInterviewData);
 
       const response = await axios.post("/api/create-interview", {
         organizationName: organization?.name,
         interviewData: sanitizedInterviewData,
       });
+
+      console.log("Interview creation response:", response.data);
+      
+      // Show success message
+      toast.success("Interview created successfully!", {
+        description: "Your interview is now ready to share",
+        duration: 3000,
+      });
+      
+      // Refresh the interviews list immediately
+      console.log("Refreshing interviews after creation...");
+      await fetchInterviews();
+      console.log("Interviews refreshed after creation");
+      
       setIsClicked(false);
-      fetchInterviews();
       setOpen(false);
+      
     } catch (error) {
       console.error("Error creating interview:", error);
+      setIsClicked(false);
+      
+      // Show user-friendly error message
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("Server error:", error.response.data);
+        const errorMsg = error.response.data.error || 'Unknown error';
+        const details = error.response.data.details;
+        toast.error("Failed to create interview", {
+          description: details ? `${errorMsg}: ${details}` : errorMsg,
+          duration: 5000,
+        });
+      } else {
+        toast.error("Failed to create interview", {
+          description: "Please check the console for details",
+          duration: 5000,
+        });
+      }
     }
   };
 
@@ -177,12 +215,9 @@ function QuestionsPopup({ interviewData, setProceed, setOpen }: Props) {
             questions.some((question) => question.question.trim() === "")
           }
           className="bg-indigo-600 hover:bg-indigo-800 mr-5 mt-2"
-          onClick={() => {
-            setIsClicked(true);
-            onSave();
-          }}
+          onClick={onSave}
         >
-          Save
+          {isClicked ? "Creating..." : "Save"}
         </Button>
       </div>
     </div>

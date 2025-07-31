@@ -63,7 +63,8 @@ function DetailsPopup({
   fileName,
   setFileName,
 }: Props) {
-  const { interviewers } = useInterviewers();
+  const { interviewers, interviewersLoading, fetchInterviewers } = useInterviewers();
+  
   const { organization } = useOrganization();
   const [isClicked, setIsClicked] = useState(false);
   const [openInterviewerDetails, setOpenInterviewerDetails] = useState(false);
@@ -88,7 +89,7 @@ function DetailsPopup({
 
   // Calculate form completion progress
   useEffect(() => {
-    const fields = [name, selectedInterviewer !== BigInt(0), objective, numQuestions, duration];
+    const fields = [name, selectedInterviewer !== "", objective, numQuestions, duration];
     const completed = fields.filter(Boolean).length;
     setFormProgress((completed / fields.length) * 100);
   }, [name, selectedInterviewer, objective, numQuestions, duration]);
@@ -108,7 +109,7 @@ function DetailsPopup({
   };
 
   const isFormValid = () => {
-    return name && objective && numQuestions && duration && selectedInterviewer !== BigInt(0);
+    return name && objective && numQuestions && duration && selectedInterviewer !== "";
   };
 
   const onGenerateQuestions = async () => {
@@ -211,7 +212,7 @@ function DetailsPopup({
   useEffect(() => {
     if (!open) {
       setName("");
-      setSelectedInterviewer(BigInt(0));
+      setSelectedInterviewer("");
       setObjective("");
       setIsAnonymous(false);
       setNumQuestions("");
@@ -300,9 +301,46 @@ function DetailsPopup({
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-8">
-                <div className="relative">
-                  {/* Navigation Buttons */}
-                  {interviewers.length > 3 && (
+                {interviewersLoading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                    <span className="ml-2 text-gray-600">Loading interviewers...</span>
+                  </div>
+                ) : interviewers.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600">No interviewers available</p>
+                    <p className="text-sm text-gray-500 mb-4">Please create interviewers first</p>
+                    <Button
+                      onClick={async () => {
+                        try {
+                          toast.loading('Creating AI interviewers...', { id: 'create-interviewers' });
+                          const response = await fetch('/api/init-interviewers', {
+                            method: 'POST',
+                          });
+                          if (response.ok) {
+                            toast.success('Default interviewers created successfully', { id: 'create-interviewers' });
+                            // Refetch interviewers
+                            await fetchInterviewers();
+                          } else {
+                            const error = await response.json();
+                            toast.error(error.error || 'Failed to create interviewers', { id: 'create-interviewers' });
+                          }
+                        } catch (error) {
+                          console.error('Error creating interviewers:', error);
+                          toast.error('Error creating interviewers', { id: 'create-interviewers' });
+                        }
+                      }}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                    >
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Create Default AI Interviewers
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    {/* Navigation Buttons */}
+                    {interviewers.length > 3 && (
                     <>
                       <Button
                         variant="outline"
@@ -400,7 +438,8 @@ function DetailsPopup({
                       ))}
                     </div>
                   </div>
-                </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

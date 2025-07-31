@@ -20,12 +20,13 @@ export async function POST(req: Request, res: Response) {
   let callSummaries = "";
   if (responses) {
     responses.forEach((response) => {
-      callSummaries += response.details?.call_analysis?.call_summary;
+      const details = response.details as any;
+      callSummaries += details?.call_analysis?.call_summary || "";
     });
   }
 
   const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY, // Your OpenRouter API key
+    apiKey: process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY, // Support both env var names
     baseURL: "https://openrouter.ai/api/v1",
     maxRetries: 5,
     dangerouslyAllowBrowser: true,
@@ -38,9 +39,9 @@ export async function POST(req: Request, res: Response) {
   try {
     const prompt = createUserPrompt(
       callSummaries,
-      interview.name,
-      interview.objective,
-      interview.description,
+      interview?.name || '',
+      interview?.objective || '',
+      interview?.description || '',
     );
 
     const baseCompletion = await openai.chat.completions.create({

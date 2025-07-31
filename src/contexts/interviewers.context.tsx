@@ -2,7 +2,6 @@
 
 import React, { useState, useContext, ReactNode, useEffect } from "react";
 import { Interviewer } from "@/types/interviewer";
-import { InterviewerService } from "@/services/interviewers.service";
 import { useClerk } from "@clerk/nextjs";
 
 interface InterviewerContextProps {
@@ -11,6 +10,7 @@ interface InterviewerContextProps {
   createInterviewer: (payload: any) => void;
   interviewersLoading: boolean;
   setInterviewersLoading: (interviewersLoading: boolean) => void;
+  fetchInterviewers: () => void;
 }
 
 export const InterviewerContext = React.createContext<InterviewerContextProps>({
@@ -19,6 +19,7 @@ export const InterviewerContext = React.createContext<InterviewerContextProps>({
   createInterviewer: () => {},
   interviewersLoading: false,
   setInterviewersLoading: () => undefined,
+  fetchInterviewers: () => {},
 });
 
 interface InterviewerProviderProps {
@@ -33,19 +34,51 @@ export function InterviewerProvider({ children }: InterviewerProviderProps) {
   const fetchInterviewers = async () => {
     try {
       setInterviewersLoading(true);
-      const response = await InterviewerService.getAllInterviewers(
-        user?.id as string,
-      );
-      setInterviewers(response);
+      console.log('Fetching interviewers for user:', user?.id);
+      
+      const response = await fetch('/api/interviewers', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      console.log('Fetched interviewers:', data.interviewers);
+      console.log('Number of interviewers:', data.interviewers?.length || 0);
+      
+      setInterviewers(Array.isArray(data.interviewers) ? data.interviewers : []);
     } catch (error) {
-      console.error(error);
+      console.error('Error fetching interviewers:', error);
+      setInterviewers([]); // Set empty array on error
+    } finally {
+      setInterviewersLoading(false);
     }
-    setInterviewersLoading(false);
   };
 
   const createInterviewer = async (payload: any) => {
-    await InterviewerService.createInterviewer({ ...payload });
-    fetchInterviewers();
+    try {
+      const response = await fetch('/api/create-interviewer', {
+        method: 'GET', // This endpoint uses GET method
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      await fetchInterviewers();
+    } catch (error) {
+      console.error('Error creating interviewer:', error);
+      throw error;
+    }
   };
 
   useEffect(() => {
@@ -63,6 +96,7 @@ export function InterviewerProvider({ children }: InterviewerProviderProps) {
         createInterviewer,
         interviewersLoading,
         setInterviewersLoading,
+        fetchInterviewers,
       }}
     >
       {children}

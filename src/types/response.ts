@@ -1,5 +1,5 @@
 export interface Response {
-  id: bigint;
+  id: string; // Changed from bigint to string (matches Prisma cuid())
   created_at: Date;
   name: string | null;
   interview_id: string;

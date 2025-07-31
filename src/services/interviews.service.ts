@@ -1,105 +1,148 @@
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-
-const supabase = createClientComponentClient();
+import { db } from "@/lib/db";
 
 const getAllInterviews = async (userId: string, organizationId: string) => {
+  // FORCE CONSOLE LOGS TO APPEAR
+  console.log("🚀🚀🚀 InterviewService.getAllInterviews - ENTRY POINT 🚀🚀🚀");
+  console.log("🚀 Params - userId:", userId, "organizationId:", organizationId);
+  console.log("🚀 Environment check - NODE_ENV:", process.env.NODE_ENV);
+  console.log("🚀 Database URL exists:", !!process.env.DATABASE_URL);
+  
+  // Simple direct database query without fancy connection handling
   try {
-    const { data: clientData, error: clientError } = await supabase
-      .from("interview")
-      .select(`*`)
-      .or(`organization_id.eq.${organizationId},user_id.eq.${userId}`)
-      .order("created_at", { ascending: false });
-
-    return [...(clientData || [])];
+    console.log("🔍 DIRECT DATABASE QUERY - Starting...");
+    
+    const interviews = await db.interview.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 20
+    });
+    
+    console.log("🔍 DIRECT DATABASE QUERY - Result:", interviews.length, "interviews");
+    console.log("🔍 DIRECT DATABASE QUERY - Interview names:", interviews.map(i => i.name));
+    console.log("🔍 DIRECT DATABASE QUERY - Full data:", JSON.stringify(interviews, null, 2));
+    
+    if (interviews.length > 0) {
+      console.log("✅ SUCCESS - Returning", interviews.length, "interviews");
+      return interviews;
+    } else {
+      console.log("⚠️ WARNING - No interviews found, but query succeeded");
+      return [];
+    }
+    
   } catch (error) {
-    console.log(error);
-
+    console.error("❌❌❌ FATAL DATABASE ERROR ❌❌❌");
+    console.error("Error name:", error?.name);
+    console.error("Error message:", error?.message);
+    console.error("Error code:", error?.code);
+    console.error("Error stack:", error?.stack);
+    console.error("Full error:", JSON.stringify(error, null, 2));
+    
+    // Try a simple count query to test connection
+    try {
+      console.log("🚨 FALLBACK - Trying simple count query...");
+      const count = await db.interview.count();
+      console.log("🚨 FALLBACK - Count succeeded:", count);
+    } catch (countError) {
+      console.error("🚨 FALLBACK - Count failed:", countError?.message);
+    }
+    
     return [];
   }
 };
 
 const getInterviewById = async (id: string) => {
+  console.log("🔍 getInterviewById - Looking for interview with ID/slug:", id);
+  
   try {
-    const { data, error } = await supabase
-      .from("interview")
-      .select(`*`)
-      .or(`id.eq.${id},readable_slug.eq.${id}`);
+    const interview = await db.interview.findFirst({
+      where: {
+        OR: [
+          { id },
+          { readable_slug: id }
+        ]
+      }
+    });
 
-    return data ? data[0] : null;
+    if (interview) {
+      console.log("✅ getInterviewById - Found interview:", interview.name);
+      console.log("✅ getInterviewById - Interview details:", {
+        id: interview.id,
+        name: interview.name,
+        readable_slug: interview.readable_slug,
+        is_active: interview.is_active
+      });
+    } else {
+      console.log("⚠️ getInterviewById - No interview found with ID/slug:", id);
+    }
+
+    return interview;
   } catch (error) {
-    console.log(error);
-
-    return [];
+    console.error("❌ getInterviewById - Error:", error);
+    return null;
   }
 };
 
 const updateInterview = async (payload: any, id: string) => {
-  const { error, data } = await supabase
-    .from("interview")
-    .update({ ...payload })
-    .eq("id", id);
-  if (error) {
+  try {
+    const data = await db.interview.update({
+      where: { id },
+      data: payload,
+    });
+    return data;
+  } catch (error) {
     console.log(error);
-
-    return [];
+    return null;
   }
-
-  return data;
 };
 
 const deleteInterview = async (id: string) => {
-  const { error, data } = await supabase
-    .from("interview")
-    .delete()
-    .eq("id", id);
-  if (error) {
+  try {
+    const data = await db.interview.delete({
+      where: { id },
+    });
+    return data;
+  } catch (error) {
     console.log(error);
-
-    return [];
+    return null;
   }
-
-  return data;
 };
 
 const getAllRespondents = async (interviewId: string) => {
   try {
-    const { data, error } = await supabase
-      .from("interview")
-      .select(`respondents`)
-      .eq("interview_id", interviewId);
+    const interview = await db.interview.findUnique({
+      where: { id: interviewId },
+      select: { respondents: true }
+    });
 
-    return data || [];
+    return interview ? [interview] : [];
   } catch (error) {
     console.log(error);
-
     return [];
   }
 };
 
 const createInterview = async (payload: any) => {
-  const { error, data } = await supabase
-    .from("interview")
-    .insert({ ...payload });
-  if (error) {
-    console.log(error);
-
-    return [];
+  try {
+    console.log("InterviewService.createInterview - payload:", payload);
+    const data = await db.interview.create({
+      data: payload,
+    });
+    console.log("InterviewService.createInterview - created interview:", data);
+    return data;
+  } catch (error) {
+    console.error("InterviewService.createInterview - error:", error);
+    throw error; // Re-throw the error so the API can handle it properly
   }
-
-  return data;
 };
 
 const deactivateInterviewsByOrgId = async (organizationId: string) => {
   try {
-    const { error } = await supabase
-      .from("interview")
-      .update({ is_active: false })
-      .eq("organization_id", organizationId)
-      .eq("is_active", true); // Optional: only update if currently active
-
-    if (error) {
-      console.error("Failed to deactivate interviews:", error);
-    }
+    await db.interview.updateMany({
+      where: {
+        organization_id: organizationId,
+        is_active: true
+      },
+      data: { is_active: false }
+    });
   } catch (error) {
     console.error("Unexpected error disabling interviews:", error);
   }

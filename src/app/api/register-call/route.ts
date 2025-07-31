@@ -16,7 +16,7 @@ export async function POST(req: Request, res: Response) {
   const interviewer = await InterviewerService.getInterviewer(interviewerId);
 
   const registerCallResponse = await retellClient.call.createWebCall({
-    agent_id: interviewer?.agent_id,
+    agent_id: interviewer?.agent_id || '',
     retell_llm_dynamic_variables: body.dynamic_data,
   });
 

@@ -46,6 +46,12 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -87,6 +93,7 @@ function InterviewHome({ params, searchParams }: Props) {
   const [iconColor, seticonColor] = useState<string>("#4F46E5");
   const { organization } = useOrganization();
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
+  const [showAdminPanel, setShowAdminPanel] = useState<boolean>(false);
 
   const seeInterviewPreviewPage = () => {
     const protocol = base_url?.includes("localhost") ? "http" : "https";
@@ -143,17 +150,31 @@ function InterviewHome({ params, searchParams }: Props) {
   useEffect(() => {
     const fetchResponses = async () => {
       try {
-        const response = await ResponseService.getAllResponses(params.interviewId);
-        setResponses(response);
+        console.log("🔍 Fetching responses for interview:", params.interviewId);
+        
+        const response = await fetch(`/api/get-responses?interviewId=${encodeURIComponent(params.interviewId)}`);
+        const data = await response.json();
+        
+        console.log("🔍 API response:", data);
+        
+        if (response.ok && data.success) {
+          console.log("🔍 Fetched responses:", data.count);
+          setResponses(data.responses);
+        } else {
+          console.error("🔍 Failed to fetch responses:", data.error);
+          setResponses([]);
+        }
+        
         setLoading(true);
       } catch (error) {
-        console.error(error);
+        console.error("🔍 Error fetching responses:", error);
+        setResponses([]);
       } finally {
         setLoading(false);
       }
     };
     fetchResponses();
-  }, []);
+  }, [params.interviewId]); // Added dependency
 
   const handleDeleteResponse = (deletedCallId: string) => {
     if (responses) {
@@ -310,9 +331,10 @@ function InterviewHome({ params, searchParams }: Props) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50">
-        <LoaderWithText />
-      </div>
+      <LoaderWithText 
+        message="Loading Interview" 
+        description="Preparing your interview dashboard and response data"
+      />
     );
   }
 
@@ -323,13 +345,13 @@ function InterviewHome({ params, searchParams }: Props) {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Left Section - Interview Info */}
-            <div className="flex items-center gap-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
               <div className="flex items-center gap-3">
                 <div 
                   className="w-3 h-3 rounded-full border-2 border-white shadow-lg"
                   style={{ backgroundColor: iconColor }}
                 />
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">
                   {interview?.name}
                 </h1>
               </div>
@@ -341,15 +363,16 @@ function InterviewHome({ params, searchParams }: Props) {
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
-                  <span>Active Interview</span>
+                  <span className="hidden sm:inline">Active Interview</span>
+                  <span className="sm:hidden">Active</span>
                 </div>
               </div>
             </div>
 
             {/* Right Section - Actions */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               {/* Action Buttons */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -413,15 +436,60 @@ function InterviewHome({ params, searchParams }: Props) {
                     <TooltipContent>Edit Interview</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={async () => {
+                          try {
+                            const response = await fetch(`/api/get-responses?interviewId=${encodeURIComponent(params.interviewId)}`);
+                            const data = await response.json();
+                            
+                            if (response.ok && data.success) {
+                              setResponses(data.responses);
+                            }
+                          } catch (error) {
+                            console.error("Error refreshing:", error);
+                          }
+                        }}
+                        className="hover:bg-gray-50 hover:border-gray-300"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Refresh Responses</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                {process.env.NODE_ENV === 'development' && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowAdminPanel(true)}
+                          className="hover:bg-blue-50 hover:border-blue-300"
+                        >
+                          <Settings className="w-4 h-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Admin Panel</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </div>
 
               {/* Status Toggle */}
-              <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
+              <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-4 border-l border-gray-200">
                 {currentPlan === "free_trial_over" ? (
-                  <Badge variant="destructive">Inactive - Upgrade Required</Badge>
+                  <Badge variant="destructive" className="text-xs sm:text-sm">Inactive - Upgrade Required</Badge>
                 ) : (
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-gray-700">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <span className="text-xs sm:text-sm font-medium text-gray-700 hidden sm:inline">
                       {isActive ? "Active" : "Inactive"}
                     </span>
                     <Switch
@@ -438,10 +506,10 @@ function InterviewHome({ params, searchParams }: Props) {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="grid grid-cols-12 gap-6 h-[calc(100vh-140px)]">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 min-h-[calc(100vh-140px)]">
           {/* Sidebar - Candidates List */}
-          <div className="col-span-4 xl:col-span-3">
+          <div className="lg:col-span-4 xl:col-span-3">
             <Card className="h-full border-0 shadow-xl">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
@@ -567,18 +635,32 @@ function InterviewHome({ params, searchParams }: Props) {
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center h-64 text-center p-6">
-                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <Users className="w-8 h-8 text-gray-400" />
+                      <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mb-4">
+                        <Users className="w-8 h-8 text-blue-500" />
                       </div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        No candidates found
+                        {searchTerm || filterStatus !== "ALL" ? "No candidates found" : "No Interview Responses Yet"}
                       </h3>
-                      <p className="text-gray-600 text-sm">
+                      <p className="text-gray-600 text-sm mb-4">
                         {searchTerm || filterStatus !== "ALL" 
                           ? "Try adjusting your search or filter criteria"
-                          : "Share your interview link to start collecting responses"
+                          : "Once candidates complete interviews, their analytics and insights will appear here."
                         }
                       </p>
+                      {!searchTerm && filterStatus === "ALL" && (
+                        <div className="space-y-3">
+                          <Button
+                            onClick={openSharePopup}
+                            className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white"
+                          >
+                            <Share2 className="w-4 h-4 mr-2" />
+                            Share Interview Link
+                          </Button>
+                          <p className="text-xs text-gray-500">
+                            Share the interview link to start collecting candidate responses and analytics
+                          </p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </ScrollArea>
@@ -587,7 +669,7 @@ function InterviewHome({ params, searchParams }: Props) {
           </div>
 
           {/* Main Content Area */}
-          <div className="col-span-8 xl:col-span-9">
+          <div className="lg:col-span-8 xl:col-span-9">
             <Card className="h-full border-0 shadow-xl">
               <CardContent className="p-0 h-full">
                 {responses && (
@@ -665,6 +747,151 @@ function InterviewHome({ params, searchParams }: Props) {
           onClose={closeSharePopup}
         />
       )}
+
+      {/* Admin Panel Dialog */}
+      <Dialog open={showAdminPanel} onOpenChange={setShowAdminPanel}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Settings className="w-5 h-5" />
+              Admin Panel - Development Tools
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 p-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardContent className="p-4">
+                  <h3 className="font-semibold mb-3 flex items-center gap-2">
+                    <Settings className="w-4 h-4" />
+                    Debug Tools
+                  </h3>
+                  <div className="space-y-2">
+                    <Button
+                      onClick={async () => {
+                        try {
+                          const response = await fetch(`/api/debug-interview-responses?interviewId=${params.interviewId}`);
+                          const data = await response.json();
+                          console.log("Debug - Database responses:", data);
+                          alert(`Found ${data.totalResponses} responses in database. Check console for details.`);
+                        } catch (error) {
+                          console.error("Debug error:", error);
+                          alert("Debug failed - check console");
+                        }
+                      }}
+                      variant="outline"
+                      className="w-full justify-start"
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      Debug Database
+                    </Button>
+                    <Button
+                      onClick={async () => {
+                        const callId = prompt("Enter Call ID to debug:");
+                        if (!callId) return;
+                        try {
+                          const response = await fetch(`/api/debug-call-id?callId=${encodeURIComponent(callId)}`);
+                          const data = await response.json();
+                          console.log("Debug call ID result:", data);
+                          if (data.exists) {
+                            alert(`Call ID EXISTS! Response ID: ${data.response.id}`);
+                          } else {
+                            alert(`Call ID NOT FOUND. Similar: ${data.similarResponses.length}`);
+                          }
+                        } catch (error) {
+                          console.error("Debug call ID error:", error);
+                          alert("Debug failed - check console");
+                        }
+                      }}
+                      variant="outline"
+                      className="w-full justify-start"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Debug Call ID
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-4">
+                  <h3 className="font-semibold mb-3 flex items-center gap-2">
+                    <Award className="w-4 h-4" />
+                    Test Tools
+                  </h3>
+                  <div className="space-y-2">
+                    <Button
+                      onClick={async () => {
+                        try {
+                          const response = await fetch('/api/test-complete-flow', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              interviewId: params.interviewId,
+                              email: 'test@example.com',
+                              name: 'Test User'
+                            })
+                          });
+                          const data = await response.json();
+                          if (data.success) {
+                            alert("Test response created! Check the responses list.");
+                            // Refresh responses
+                            const refreshResponse = await fetch(`/api/get-responses?interviewId=${encodeURIComponent(params.interviewId)}`);
+                            const refreshData = await refreshResponse.json();
+                            if (refreshResponse.ok && refreshData.success) {
+                              setResponses(refreshData.responses);
+                            }
+                          } else {
+                            alert("Test failed: " + data.error);
+                          }
+                        } catch (error) {
+                          console.error("Test error:", error);
+                          alert("Test failed - check console");
+                        }
+                      }}
+                      variant="outline"
+                      className="w-full justify-start"
+                    >
+                      <Award className="w-4 h-4 mr-2" />
+                      Create Test Response
+                    </Button>
+                    <Button
+                      onClick={async () => {
+                        try {
+                          const response = await fetch('/api/create-test-user', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email: 'testuser@example.com' })
+                          });
+                          const data = await response.json();
+                          if (data.success) {
+                            alert(`User ${data.user.existed ? 'exists' : 'created'}: ${data.user.email}`);
+                          } else {
+                            alert(`User creation failed: ${data.error}`);
+                          }
+                        } catch (error) {
+                          console.error("Test user error:", error);
+                          alert("User creation failed - check console");
+                        }
+                      }}
+                      variant="outline"
+                      className="w-full justify-start"
+                    >
+                      <UserIcon className="w-4 h-4 mr-2" />
+                      Create Test User
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="text-center">
+              <Button onClick={() => setShowAdminPanel(false)} variant="outline">
+                Close Admin Panel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

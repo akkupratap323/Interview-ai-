@@ -113,11 +113,13 @@ function CallInfo({
       setIsLoading(true);
       try {
         const response = await ResponseService.getResponseByCallId(call_id);
-        setEmail(response.email);
-        setName(response.name);
-        setCandidateStatus(response.candidate_status);
-        setInterviewId(response.interview_id);
-        setTabSwitchCount(response.tab_switch_count);
+        if (response) {
+          setEmail(response.email || '');
+          setName(response.name || '');
+          setCandidateStatus(response.candidate_status || '');
+          setInterviewId(response.interview_id || '');
+          setTabSwitchCount(response.tab_switch_count || 0);
+        }
       } catch (error) {
         console.error(error);
       } finally {
@@ -189,28 +191,28 @@ function CallInfo({
     switch (status) {
       case CandidateStatus.SELECTED:
         return (
-          <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">
+          <Badge className="bg-green-50 text-green-700 border border-green-200 rounded-full px-3 py-1">
             <CheckCircle2 className="w-3 h-3 mr-1" />
             Selected
           </Badge>
         );
       case CandidateStatus.POTENTIAL:
         return (
-          <Badge className="bg-amber-100 text-amber-800 border-amber-200">
+          <Badge className="bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-3 py-1">
             <Eye className="w-3 h-3 mr-1" />
             Potential
           </Badge>
         );
       case CandidateStatus.NOT_SELECTED:
         return (
-          <Badge className="bg-red-100 text-red-800 border-red-200">
+          <Badge className="bg-red-50 text-red-700 border border-red-200 rounded-full px-3 py-1">
             <XCircle className="w-3 h-3 mr-1" />
             Not Selected
           </Badge>
         );
       default:
         return (
-          <Badge variant="outline">
+          <Badge className="bg-gray-50 text-gray-700 border border-gray-200 rounded-full px-3 py-1">
             <Minus className="w-3 h-3 mr-1" />
             Pending
           </Badge>
@@ -229,206 +231,204 @@ function CallInfo({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50">
-        <LoaderWithText />
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <LoaderWithText 
+          message="Loading Candidate Details" 
+          description="Preparing interview analysis and transcript"
+        />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
+    <div className="min-h-screen bg-white">
+      <div className="max-w-5xl mx-auto p-4 sm:p-6 space-y-6">
         {/* Header Section */}
-        <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <Button
-                variant="ghost"
-                onClick={() => router.push(`/interviews/${interviewId}`)}
-                className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back to Summary
-              </Button>
+        <div className="bg-white border-b border-gray-100 sticky top-0 z-10 pb-4">
+          <div className="flex items-center justify-between mb-6">
+            <Button
+              variant="ghost"
+              onClick={() => router.push(`/interviews/${interviewId}`)}
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg px-3 py-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="font-medium">Back to Interview</span>
+            </Button>
 
-              {tabSwitchCount && tabSwitchCount > 0 && (
-                <Badge className="bg-red-100 text-red-800 border-red-200">
-                  <AlertTriangle className="w-3 h-3 mr-1" />
-                  Tab Switching Detected
-                </Badge>
-              )}
-            </div>
-
-            {/* Candidate Info */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <Avatar className="w-16 h-16 border-4 border-indigo-100">
-                  <AvatarFallback className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xl font-semibold">
-                    {name ? name[0].toUpperCase() : "A"}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">
-                    {name || "Anonymous Candidate"}
-                  </h1>
-                  {email && (
-                    <p className="text-gray-600 flex items-center gap-2">
-                      <User className="w-4 h-4" />
-                      {email}
-                    </p>
-                  )}
-                  <div className="mt-2">
-                    {getStatusBadge(candidateStatus)}
-                  </div>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center gap-3">
-                <Select
-                  value={candidateStatus}
-                  onValueChange={async (newValue: string) => {
-                    setCandidateStatus(newValue);
-                    await ResponseService.updateResponse(
-                      { candidate_status: newValue },
-                      call_id,
-                    );
-                    onCandidateStatusChange(call_id, newValue);
-                  }}
-                >
-                  <SelectTrigger className="w-48 bg-white border-gray-300">
-                    <SelectValue placeholder="Select Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={CandidateStatus.NO_STATUS}>
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-gray-400 rounded-full mr-2" />
-                        No Status
-                      </div>
-                    </SelectItem>
-                    <SelectItem value={CandidateStatus.NOT_SELECTED}>
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-red-500 rounded-full mr-2" />
-                        Not Selected
-                      </div>
-                    </SelectItem>
-                    <SelectItem value={CandidateStatus.POTENTIAL}>
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-amber-500 rounded-full mr-2" />
-                        Potential
-                      </div>
-                    </SelectItem>
-                    <SelectItem value={CandidateStatus.SELECTED}>
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-emerald-500 rounded-full mr-2" />
-                        Selected
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      disabled={isClicked}
-                      className="hover:bg-red-600"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Response</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete this candidate&apos;s response and all associated data.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        className="bg-red-600 hover:bg-red-700"
-                        onClick={onDeleteResponseClick}
-                      >
-                        Delete Response
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
-            </div>
-
-            {/* Recording Section */}
-            {call?.recording_url && (
-              <div className="mt-6 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-100">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                    <Volume2 className="w-5 h-5 text-indigo-600" />
-                    Interview Recording
-                  </h3>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          asChild
-                          className="hover:bg-indigo-100"
-                        >
-                          <a href={call.recording_url} download aria-label="Download recording">
-                            <Download className="w-4 h-4" />
-                          </a>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Download Recording</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-                <ReactAudioPlayer 
-                  src={call.recording_url} 
-                  controls 
-                  className="w-full"
-                  style={{ width: '100%' }}
-                />
-              </div>
+            {tabSwitchCount && tabSwitchCount > 0 && (
+              <Badge className="bg-red-50 text-red-700 border border-red-200 rounded-full px-3 py-1">
+                <AlertTriangle className="w-3 h-3 mr-1" />
+                Tab Switching Detected
+              </Badge>
             )}
-          </CardContent>
-        </Card>
+          </div>
+
+          {/* Candidate Info */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200">
+                <span className="text-2xl font-semibold text-gray-700">
+                  {name ? name[0].toUpperCase() : "A"}
+                </span>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                  {name || "Anonymous Candidate"}
+                </h1>
+                {email && (
+                  <p className="text-gray-600 text-sm mb-2">
+                    {email}
+                  </p>
+                )}
+                <div>
+                  {getStatusBadge(candidateStatus)}
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <Select
+                value={candidateStatus}
+                onValueChange={async (newValue: string) => {
+                  setCandidateStatus(newValue);
+                  await ResponseService.updateResponse(
+                    { candidate_status: newValue },
+                    call_id,
+                  );
+                  onCandidateStatusChange(call_id, newValue);
+                }}
+              >
+                <SelectTrigger className="flex-1 sm:w-48 bg-white border-gray-200 rounded-lg">
+                  <SelectValue placeholder="Select Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={CandidateStatus.NO_STATUS}>
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 bg-gray-400 rounded-full mr-2" />
+                      Pending
+                    </div>
+                  </SelectItem>
+                  <SelectItem value={CandidateStatus.NOT_SELECTED}>
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 bg-red-500 rounded-full mr-2" />
+                      Not Selected
+                    </div>
+                  </SelectItem>
+                  <SelectItem value={CandidateStatus.POTENTIAL}>
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 bg-amber-500 rounded-full mr-2" />
+                      Potential
+                    </div>
+                  </SelectItem>
+                  <SelectItem value={CandidateStatus.SELECTED}>
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 bg-emerald-500 rounded-full mr-2" />
+                      Selected
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    disabled={isClicked}
+                    className="border-gray-200 text-gray-500 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-white">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-gray-900">Delete Response</AlertDialogTitle>
+                    <AlertDialogDescription className="text-gray-600">
+                      This action cannot be undone. This will permanently delete this candidate&apos;s response and all associated data.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="border-gray-200">Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-red-600 hover:bg-red-700 text-white"
+                      onClick={onDeleteResponseClick}
+                    >
+                      Delete Response
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
+
+          {/* Recording Section */}
+          {call?.recording_url && (
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-100">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-medium text-gray-900 flex items-center gap-2">
+                  <Volume2 className="w-4 h-4 text-gray-600" />
+                  Interview Recording
+                </h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  asChild
+                  className="border-gray-200 text-gray-600 hover:bg-gray-100"
+                >
+                  <a href={call.recording_url} download aria-label="Download recording">
+                    <Download className="w-4 h-4 mr-1" />
+                    Download
+                  </a>
+                </Button>
+              </div>
+              <ReactAudioPlayer 
+                src={call.recording_url} 
+                controls 
+                className="w-full"
+                style={{ width: '100%' }}
+              />
+            </div>
+          )}
+        </div>
 
         {/* Analytics Section */}
-        <Card className="border-0 shadow-xl">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <BarChart3 className="w-6 h-6 text-blue-600" />
+        <div className="bg-white rounded-lg border border-gray-100">
+          <div className="p-6 border-b border-gray-100">
+            <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-gray-600" />
               Performance Analytics
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            </h2>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Overall Score */}
               {analytics?.overallScore !== undefined && (
-                <div className="relative p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100">
+                <div className="p-6 bg-white rounded-lg border border-gray-100">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <Award className="w-5 h-5 text-indigo-600" />
-                      <h3 className="font-semibold text-gray-900">Overall Score</h3>
+                      <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
+                        <Award className="w-4 h-4 text-blue-600" />
+                      </div>
+                      <h3 className="font-medium text-gray-900">Overall Score</h3>
                     </div>
-                    <Badge className={`bg-gradient-to-r ${getScoreBg(analytics.overallScore)} text-white`}>
+                    <Badge className="bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-3 py-1">
                       {analytics.overallScore}/100
                     </Badge>
                   </div>
                   
                   <div className="mb-4">
-                    <Progress 
-                      value={analytics.overallScore * 10} 
-                      className="h-3"
-                    />
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div 
+                        className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                        style={{ width: `${analytics.overallScore}%` }}
+                      ></div>
+                    </div>
                   </div>
                   
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-gray-700">Feedback:</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 leading-relaxed">
                       {analytics?.overallFeedback || <Skeleton className="w-full h-4" />}
                     </p>
                   </div>
@@ -437,27 +437,31 @@ function CallInfo({
 
               {/* Communication Score */}
               {analytics?.communication && (
-                <div className="relative p-6 bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl border border-emerald-100">
+                <div className="p-6 bg-white rounded-lg border border-gray-100">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <MessageSquare className="w-5 h-5 text-emerald-600" />
-                      <h3 className="font-semibold text-gray-900">Communication</h3>
+                      <div className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center">
+                        <MessageSquare className="w-4 h-4 text-green-600" />
+                      </div>
+                      <h3 className="font-medium text-gray-900">Communication</h3>
                     </div>
-                    <Badge className={`bg-gradient-to-r ${getScoreBg(analytics.communication.score)} text-white`}>
+                    <Badge className="bg-green-50 text-green-700 border border-green-200 rounded-full px-3 py-1">
                       {analytics.communication.score}/10
                     </Badge>
                   </div>
                   
                   <div className="mb-4">
-                    <Progress 
-                      value={analytics.communication.score * 10} 
-                      className="h-3"
-                    />
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div 
+                        className="bg-green-600 h-2 rounded-full transition-all duration-300" 
+                        style={{ width: `${analytics.communication.score * 10}%` }}
+                      ></div>
+                    </div>
                   </div>
                   
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-gray-700">Feedback:</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 leading-relaxed">
                       {analytics?.communication.feedback || <Skeleton className="w-full h-4" />}
                     </p>
                   </div>
@@ -465,79 +469,79 @@ function CallInfo({
               )}
 
               {/* Sentiment Analysis */}
-              <div className="relative p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-100">
+              <div className="p-6 bg-white rounded-lg border border-gray-100">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-amber-600" />
-                    <h3 className="font-semibold text-gray-900">Sentiment</h3>
+                    <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center">
+                      <TrendingUp className="w-4 h-4 text-amber-600" />
+                    </div>
+                    <h3 className="font-medium text-gray-900">Sentiment</h3>
                   </div>
-                  <Badge className={`${getSentimentColor(call?.call_analysis?.user_sentiment || '')} bg-white border`}>
+                  <Badge className="bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-3 py-1">
                     {call?.call_analysis?.user_sentiment || <Skeleton className="w-16 h-4" />}
                   </Badge>
                 </div>
                 
                 <div className="space-y-3">
                   <div>
-                    <p className="text-sm font-medium text-gray-700 mb-1">Call Summary:</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Call Summary:</p>
+                    <p className="text-sm text-gray-600 leading-relaxed">
                       {call?.call_analysis?.call_summary || <Skeleton className="w-full h-4" />}
                     </p>
                   </div>
                   
                   {call?.call_analysis?.call_completion_rating_reason && (
-                    <p className="text-sm text-gray-600 italic">
+                    <p className="text-sm text-gray-500 italic leading-relaxed">
                       {call.call_analysis.call_completion_rating_reason}
                     </p>
                   )}
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Question Summary */}
         {analytics?.questionSummaries && analytics.questionSummaries.length > 0 && (
-          <Card className="border-0 shadow-xl">
-            <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b">
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <Target className="w-6 h-6 text-purple-600" />
+          <div className="bg-white rounded-lg border border-gray-100">
+            <div className="p-6 border-b border-gray-100">
+              <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                <Target className="w-5 h-5 text-gray-600" />
                 Question Analysis
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <ScrollArea className="h-96">
-                <div className="space-y-4">
-                  {analytics.questionSummaries.map((qs, index) => (
-                    <QuestionAnswerCard
-                      key={qs.question}
-                      questionNumber={index + 1}
-                      question={qs.question}
-                      answer={qs.summary}
-                    />
-                  ))}
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
+              </h2>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4 max-h-96 overflow-y-auto">
+                {analytics.questionSummaries.map((qs, index) => (
+                  <QuestionAnswerCard
+                    key={qs.question}
+                    questionNumber={index + 1}
+                    question={qs.question}
+                    answer={qs.summary}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Transcript */}
-        <Card className="border-0 shadow-xl">
-          <CardHeader className="bg-gradient-to-r from-gray-50 to-slate-50 border-b">
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <FileText className="w-6 h-6 text-gray-600" />
+        <div className="bg-white rounded-lg border border-gray-100">
+          <div className="p-6 border-b border-gray-100">
+            <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+              <FileText className="w-5 h-5 text-gray-600" />
               Interview Transcript
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <ScrollArea className="h-96">
+            </h2>
+          </div>
+          <div className="p-6">
+            <div className="max-h-96 overflow-y-auto">
               <div
                 className="prose prose-sm max-w-none text-gray-700 leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: marked(transcript) }}
               />
-            </ScrollArea>
-          </CardContent>
-        </Card>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

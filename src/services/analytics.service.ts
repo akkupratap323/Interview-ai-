@@ -36,11 +36,11 @@ export const generateInterviewAnalytics = async (payload: {
     // Check if analytics already exist
     if (response.analytics) {
       console.log("Analytics already exist for callId:", callId);
-      return { analytics: response.analytics as Analytics, status: 200 };
+      return { analytics: response.analytics as unknown as Analytics, status: 200 };
     }
 
     // Get transcript data
-    const interviewTranscript = transcript || response.details?.transcript;
+    const interviewTranscript = transcript || (response.details as any)?.transcript;
     
     if (!interviewTranscript || interviewTranscript.trim().length === 0) {
       console.error("No transcript available for callId:", callId);
@@ -50,7 +50,7 @@ export const generateInterviewAnalytics = async (payload: {
     console.log("Transcript length:", interviewTranscript.length);
 
     // Prepare questions
-    const questions = interview?.questions || [];
+    const questions = (interview?.questions as unknown as Question[]) || [];
     
     if (questions.length === 0) {
       console.error("No questions found for interview:", interviewId);
@@ -65,7 +65,7 @@ export const generateInterviewAnalytics = async (payload: {
 
     // Initialize OpenAI client with OpenRouter configuration
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY, // Use OpenRouter API key
+      apiKey: process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY, // Support both env var names
       baseURL: "https://openrouter.ai/api/v1", // OpenRouter base URL
       maxRetries: 3,
       timeout: 60000, // 60 seconds timeout
@@ -76,8 +76,8 @@ export const generateInterviewAnalytics = async (payload: {
     });
 
     // Validate API key
-    if (!process.env.OPENAI_API_KEY) {
-      console.error("OpenRouter API key not configured");
+    if (!process.env.OPENROUTER_API_KEY && !process.env.OPENAI_API_KEY) {
+      console.error("OpenRouter API key not configured (use OPENROUTER_API_KEY or OPENAI_API_KEY)");
       return { error: "OpenRouter API key not configured", status: 500 };
     }
 
@@ -213,18 +213,18 @@ export const generateInterviewAnalyticsAdvanced = async (payload: {
     const response = await ResponseService.getResponseByCallId(callId);
     const interview = await InterviewService.getInterviewById(interviewId);
 
-    if (response.analytics) {
-      return { analytics: response.analytics as Analytics, status: 200 };
+    if (response?.analytics) {
+      return { analytics: response.analytics as unknown as Analytics, status: 200 };
     }
 
-    const interviewTranscript = transcript || response.details?.transcript;
-    const questions = interview?.questions || [];
+    const interviewTranscript = transcript || (response?.details as any)?.transcript;
+    const questions = (interview?.questions as unknown as Question[]) || [];
     const mainInterviewQuestions = questions
       .map((q: Question, index: number) => `${index + 1}. ${q.question}`)
       .join("\n");
 
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+      apiKey: process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY,
       baseURL: "https://openrouter.ai/api/v1",
       maxRetries: 3,
       timeout: 60000,
@@ -260,7 +260,7 @@ export const generateInterviewAnalyticsAdvanced = async (payload: {
     const content = baseCompletion.choices[0]?.message?.content || "";
     const analyticsResponse = JSON.parse(content);
 
-    analyticsResponse.mainInterviewQuestions = questions.map(
+    analyticsResponse.mainInterviewQuestions = (questions as Question[]).map(
       (q: Question) => q.question,
     );
     analyticsResponse.modelUsed = "openai/gpt-4o";
@@ -284,7 +284,7 @@ export const generateInterviewAnalyticsAdvanced = async (payload: {
 export const checkOpenRouterStatus = async () => {
   try {
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+      apiKey: process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY,
       baseURL: "https://openrouter.ai/api/v1",
       defaultHeaders: {
         'HTTP-Referer': process.env.NEXT_PUBLIC_LIVE_URL || 'http://localhost:3000',

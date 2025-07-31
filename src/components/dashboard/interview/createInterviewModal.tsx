@@ -13,14 +13,14 @@ const CreateEmptyInterviewData = (): InterviewBase => ({
   user_id: "",
   organization_id: "",
   name: "",
-  interviewer_id: BigInt(0),
+  interviewer_id: "",
   objective: "",
   question_count: 0,
   time_duration: "",
   is_anonymous: false,
   questions: [],
   description: "",
-  response_count: BigInt(0),
+  response_count: 0,
 });
 
 function CreateInterviewModal({ open, setOpen }: Props) {

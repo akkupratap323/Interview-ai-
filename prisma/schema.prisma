@@ -1,0 +1,125 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String       @id
+  user_id         String?
+  email           String?      @unique
+  image_url       String?
+  organization_id String?
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+  
+  organization    Organization? @relation(fields: [organization_id], references: [id])
+  interviews      Interview[]
+  responses       Response[]
+
+  @@map("user")
+}
+
+model Organization {
+  id                      String      @id
+  name                    String?
+  plan                    String?
+  allowed_responses_count Int?
+  createdAt               DateTime    @default(now()) @map("created_at")
+  updatedAt               DateTime    @updatedAt @map("updated_at")
+  
+  users      User[]
+  interviews Interview[]
+
+  @@map("organization")
+}
+
+model Interview {
+  id               String    @id @default(cuid())
+  user_id          String
+  organization_id  String?
+  interviewer_id   String?
+  readable_slug    String?   @unique
+  name             String?
+  objective        String?
+  description      String?
+  questions        Json?
+  question_count   Int       @default(0)
+  time_duration    String?
+  is_anonymous     Boolean   @default(false)
+  is_active        Boolean   @default(true)
+  response_count   Int       @default(0)
+  url              String?
+  theme_color      String?
+  logo_url         String?
+  insights         Json?
+  quotes           Json?
+  details          Json?
+  respondents      Json?
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  
+  user         User          @relation(fields: [user_id], references: [id])
+  organization Organization? @relation(fields: [organization_id], references: [id])
+  responses    Response[]
+
+  @@map("interview")
+}
+
+model Response {
+  id               String    @id @default(cuid())
+  call_id          String    @unique
+  interview_id     String
+  name             String?
+  email            String?
+  duration         Int?
+  is_ended         Boolean   @default(false)
+  is_analysed      Boolean   @default(false)
+  is_viewed        Boolean   @default(false)
+  details          Json?
+  analytics        Json?
+  candidate_status String?
+  tab_switch_count Int       @default(0)
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  
+  interview Interview @relation(fields: [interview_id], references: [id])
+  user      User?     @relation(fields: [email], references: [email])
+
+  @@map("response")
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("feedback")
+}
+
+model Interviewer {
+  id          String   @id @default(cuid())
+  user_id     String?
+  name        String?
+  agent_id    String?
+  image       String?
+  description String?
+  audio       String?
+  rapport     Int      @default(0)
+  exploration Int      @default(0)
+  empathy     Int      @default(0)
+  speed       Int      @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("interviewer")
+}

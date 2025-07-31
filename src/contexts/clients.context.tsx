@@ -32,7 +32,9 @@ export function ClientProvider({ children }: ClientProviderProps) {
         user?.emailAddresses[0]?.emailAddress as string,
         organization?.id as string,
       );
-      setClient(response);
+      if (response) {
+        setClient(response);
+      }
     } catch (error) {
       console.error(error);
     }

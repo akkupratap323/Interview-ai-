@@ -1,19 +1,16 @@
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-
-const supabase = createClientComponentClient();
+import { db } from "@/lib/db";
 
 const updateOrganization = async (payload: any, id: string) => {
-  const { error, data } = await supabase
-    .from("organization")
-    .update({ ...payload })
-    .eq("id", id);
-  if (error) {
+  try {
+    const data = await db.organization.update({
+      where: { id },
+      data: payload,
+    });
+    return data;
+  } catch (error) {
     console.log(error);
-
-    return [];
+    return null;
   }
-
-  return data;
 };
 
 const getClientById = async (
@@ -22,45 +19,40 @@ const getClientById = async (
   organization_id?: string | null,
 ) => {
   try {
-    const { data, error } = await supabase
-      .from("user")
-      .select(`*`)
-      .filter("id", "eq", id);
+    let user = await db.user.findUnique({
+      where: { id },
+    });
 
-    if (!data || (data.length === 0 && email)) {
-      const { error, data } = await supabase
-        .from("user")
-        .insert({ id: id, email: email, organization_id: organization_id });
-
-      if (error) {
-        console.log(error);
-
-        return [];
-      }
-
-      return data ? data[0] : null;
+    if (!user && email) {
+      user = await db.user.create({
+        data: {
+          id,
+          user_id: id,
+          email,
+          organization_id,
+        },
+      });
     }
 
-    if (data[0].organization_id !== organization_id) {
-      const { error, data } = await supabase
-        .from("user")
-        .update({ organization_id: organization_id })
-        .eq("id", id);
-
-      if (error) {
-        console.log(error);
-
-        return [];
-      }
-
-      return data ? data[0] : null;
+    if (user && user.organization_id !== organization_id) {
+      user = await db.user.update({
+        where: { id },
+        data: { organization_id },
+      });
     }
 
-    return data ? data[0] : null;
+    if (!user) return null;
+
+    return {
+      ...user,
+      created_at: user.createdAt,
+      user_id: user.user_id || user.id,
+      image_url: user.image_url || '',
+      organization_id: user.organization_id || '',
+    };
   } catch (error) {
     console.log(error);
-
-    return [];
+    return null;
   }
 };
 
@@ -69,45 +61,32 @@ const getOrganizationById = async (
   organization_name?: string,
 ) => {
   try {
-    const { data, error } = await supabase
-      .from("organization")
-      .select(`*`)
-      .filter("id", "eq", organization_id);
+    if (!organization_id) return null;
 
-    if (!data || data.length === 0) {
-      const { error, data } = await supabase
-        .from("organization")
-        .insert({ id: organization_id, name: organization_name });
+    let organization = await db.organization.findUnique({
+      where: { id: organization_id },
+    });
 
-      if (error) {
-        console.log(error);
-
-        return [];
-      }
-
-      return data ? data[0] : null;
+    if (!organization) {
+      organization = await db.organization.create({
+        data: {
+          id: organization_id,
+          name: organization_name,
+        },
+      });
     }
 
-    if (organization_name && data[0].name !== organization_name) {
-      const { error, data } = await supabase
-        .from("organization")
-        .update({ name: organization_name })
-        .eq("id", organization_id);
-
-      if (error) {
-        console.log(error);
-
-        return [];
-      }
-
-      return data ? data[0] : null;
+    if (organization_name && organization.name !== organization_name) {
+      organization = await db.organization.update({
+        where: { id: organization_id },
+        data: { name: organization_name },
+      });
     }
 
-    return data ? data[0] : null;
+    return organization;
   } catch (error) {
     console.log(error);
-
-    return [];
+    return null;
   }
 };
 

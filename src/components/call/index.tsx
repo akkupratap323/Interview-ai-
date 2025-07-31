@@ -43,10 +43,8 @@ import { RetellWebClient } from "retell-client-js-sdk";
 import MiniLoader from "../loaders/mini-loader/miniLoader";
 import { toast } from "sonner";
 import { isLightColor, testEmail } from "@/lib/utils";
-import { ResponseService } from "@/services/responses.service";
 import { Interview } from "@/types/interview";
 import { FeedbackData } from "@/types/response";
-import { FeedbackService } from "@/services/feedback.service";
 import { FeedbackForm } from "@/components/call/feedbackForm";
 import {
   TabSwitchWarning,
@@ -86,6 +84,10 @@ type transcriptType = {
 };
 
 function Call({ interview }: InterviewProps) {
+  console.log("🎙️ Call component - Received interview:", interview);
+  console.log("🎙️ Call component - Interview questions:", interview?.questions);
+  console.log("🎙️ Call component - Questions type:", typeof interview?.questions);
+  console.log("🎙️ Call component - Questions is array:", Array.isArray(interview?.questions));
   const { createResponse } = useResponses();
   const [lastInterviewerResponse, setLastInterviewerResponse] = useState<string>("");
   const [lastUserResponse, setLastUserResponse] = useState<string>("");
@@ -103,6 +105,9 @@ function Call({ interview }: InterviewProps) {
   const [isFeedbackSubmitted, setIsFeedbackSubmitted] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [interviewerImg, setInterviewerImg] = useState("");
+  const [insights, setInsights] = useState<any>(null);
+  const [isGeneratingInsights, setIsGeneratingInsights] = useState(false);
+  const [insightsError, setInsightsError] = useState<string | null>(null);
   const [interviewTimeDuration, setInterviewTimeDuration] = useState<string>("1");
   const [time, setTime] = useState(0);
   const [currentTimeDuration, setCurrentTimeDuration] = useState<string>("0");
@@ -114,21 +119,36 @@ function Call({ interview }: InterviewProps) {
   // Keep all existing functions and useEffects unchanged...
   const handleFeedbackSubmit = async (formData: Omit<FeedbackData, "interview_id">) => {
     try {
-      const result = await FeedbackService.submitFeedback({
+      console.log("🎯 Submitting feedback with data:", {
         ...formData,
         interview_id: interview.id,
       });
+      
+      const response = await fetch('/api/submit-feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          interview_id: interview.id,
+        }),
+      });
 
-      if (result) {
+      const result = await response.json();
+      console.log("🎯 Feedback API response:", result);
+
+      if (response.ok && result.success) {
         toast.success("Thank you for your feedback!");
         setIsFeedbackSubmitted(true);
         setIsDialogOpen(false);
       } else {
-        toast.error("Failed to submit feedback. Please try again.");
+        console.error("🎯 Feedback submission failed:", result);
+        toast.error(result.error || "Failed to submit feedback. Please try again.");
       }
     } catch (error) {
-      console.error("Error submitting feedback:", error);
-      toast.error("An error occurred. Please try again later.");
+      console.error("🎯 Error submitting feedback:", error);
+      toast.error(`An error occurred: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -153,6 +173,54 @@ function Call({ interview }: InterviewProps) {
 
     return () => clearInterval(intervalId);
   }, [isCalling, time, currentTimeDuration]);
+
+  // Function to generate insights after interview completion
+  const generateInsights = async () => {
+    console.log("🧠 Generating insights for interview:", interview.id);
+    setIsGeneratingInsights(true);
+    setInsightsError(null);
+    
+    try {
+      const response = await fetch('/api/generate-insights', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          interviewId: interview.id
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to generate insights: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log("🧠 Insights generated:", data);
+      
+      if (data.response) {
+        const parsedInsights = JSON.parse(data.response);
+        setInsights(parsedInsights.insights);
+        console.log("🧠 Parsed insights:", parsedInsights.insights);
+      }
+    } catch (error) {
+      console.error("🧠 Error generating insights:", error);
+      setInsightsError(error.message || "Failed to generate insights");
+    } finally {
+      setIsGeneratingInsights(false);
+    }
+  };
+
+  // Generate insights when interview ends
+  useEffect(() => {
+    if (isEnded && isStarted && !insights && !isGeneratingInsights) {
+      console.log("🧠 Interview ended, generating insights...");
+      // Add a small delay to ensure responses are saved
+      setTimeout(() => {
+        generateInsights();
+      }, 2000);
+    }
+  }, [isEnded, isStarted, insights, isGeneratingInsights]);
 
   useEffect(() => {
     if (testEmail(email)) {
@@ -218,24 +286,61 @@ function Call({ interview }: InterviewProps) {
   };
 
   const startConversation = async () => {
+    console.log("🎙️ Starting conversation - interview data:", interview);
+    console.log("🎙️ Starting conversation - questions:", interview?.questions);
+    
     const data = {
-      mins: interview?.time_duration,
-      objective: interview?.objective,
-      questions: interview?.questions.map((q) => q.question).join(", "),
+      mins: interview?.time_duration || "10",
+      objective: interview?.objective || "General interview",
+      questions: interview?.questions && Array.isArray(interview.questions) 
+        ? interview.questions.map((q) => q.question).join(", ")
+        : "No questions available",
       name: name || "not provided",
     };
+    
+    console.log("🎙️ Starting conversation - prepared data:", data);
     setLoading(true);
 
-    const oldUserEmails: string[] = (
-      await ResponseService.getAllEmails(interview.id)
-    ).map((item) => item.email);
-    const OldUser =
-      oldUserEmails.includes(email) ||
-      (interview?.respondents && !interview?.respondents.includes(email));
+    console.log("🎙️ Checking user eligibility - email:", email);
+    
+    let OldUser = false;
+    
+    try {
+      const eligibilityResponse = await fetch('/api/check-email-eligibility', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          interviewId: interview.id,
+          email: email,
+        }),
+      });
+
+      const eligibilityResult = await eligibilityResponse.json();
+      console.log("🎙️ Eligibility check result:", eligibilityResult);
+
+      // DEVELOPMENT MODE: Skip validation for testing
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      console.log("🎙️ Development mode:", isDevelopment);
+      
+      OldUser = !isDevelopment && (
+        eligibilityResult.isOldUser ||
+        (interview?.respondents && Array.isArray(interview.respondents) && !interview.respondents.includes(email))
+      );
+      
+      console.log("🎙️ User validation result - OldUser:", OldUser);
+    } catch (error) {
+      console.error("🎙️ Error checking eligibility:", error);
+      // In case of error, allow the user to proceed (fail open)
+      OldUser = false;
+    }
 
     if (OldUser) {
+      console.log("🎙️ User blocked - already responded or not eligible");
       setIsOldUser(true);
     } else {
+      console.log("🎙️ User allowed - proceeding with interview");
       const registerCallResponse: registerCallResponseType = await axios.post(
         "/api/register-call",
         { dynamic_data: data, interviewer_id: interview?.interviewer_id },
@@ -252,12 +357,28 @@ function Call({ interview }: InterviewProps) {
 
         setCallId(registerCallResponse?.data?.registerCallResponse?.call_id);
 
-        const response = await createResponse({
+        console.log("💾 Creating response record...");
+        const responsePayload = {
           interview_id: interview.id,
           call_id: registerCallResponse.data.registerCallResponse.call_id,
           email: email,
           name: name,
-        });
+        };
+        console.log("💾 Response payload:", responsePayload);
+        
+        const responseId = await createResponse(responsePayload);
+        
+        if (responseId) {
+          console.log("💾 Response created successfully with ID:", responseId);
+        } else {
+          console.error("💾 CRITICAL: Failed to create response record!");
+          console.error("💾 This will cause issues when the interview ends!");
+          console.error("💾 Call ID:", registerCallResponse.data.registerCallResponse.call_id);
+          console.error("💾 Interview ID:", interview.id);
+          
+          // Show user warning but continue with interview
+          toast.error("Warning: Response recording may have issues. Please contact support if problems persist.");
+        }
       } else {
         console.log("Failed to register call");
       }
@@ -275,25 +396,57 @@ function Call({ interview }: InterviewProps) {
   useEffect(() => {
     const fetchInterviewer = async () => {
       const interviewer = await InterviewerService.getInterviewer(
-        interview.interviewer_id,
+        String(interview.interviewer_id || ''),
       );
-      setInterviewerImg(interviewer.image);
+      setInterviewerImg(interviewer?.image || '');
     };
     fetchInterviewer();
   }, [interview.interviewer_id]);
 
   useEffect(() => {
-    if (isEnded) {
+    if (isEnded && callId) {
       const updateInterview = async () => {
-        await ResponseService.saveResponse(
-          { is_ended: true, tab_switch_count: tabSwitchCount },
-          callId,
-        );
+        try {
+          console.log("📝 Updating response as ended for call:", callId);
+          
+          const response = await fetch('/api/update-response', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              callId: callId,
+              interviewId: interview.id, // Include interview ID for fallback creation
+              updates: { is_ended: true, tab_switch_count: tabSwitchCount },
+            }),
+          });
+
+          const result = await response.json();
+          console.log("📝 Update response result:", result);
+
+          if (!response.ok) {
+            if (response.status === 404) {
+              console.warn("📝 Response record not found during update - this suggests response creation failed during interview start");
+              console.warn("📝 Call ID:", callId);
+              console.warn("📝 Interview ID:", interview.id);
+              
+              // Don't show error to user for 404 as it's an expected scenario
+            } else {
+              console.error("📝 Failed to update response:", result);
+              console.error("📝 Status:", response.status);
+              console.error("📝 Response details:", result);
+            }
+          } else {
+            console.log("📝 Response marked as ended successfully");
+          }
+        } catch (error) {
+          console.error("📝 Error updating response:", error);
+        }
       };
 
       updateInterview();
     }
-  }, [isEnded]);
+  }, [isEnded, callId, tabSwitchCount]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -757,24 +910,88 @@ function Call({ interview }: InterviewProps) {
 
           {/* Interview Completed */}
           {isEnded && !isOldUser && (
-            <Card className="w-full max-w-5xl border-0 shadow-2xl bg-white/80 backdrop-blur-sm overflow-hidden">
-              <CardContent className="p-12 text-center">
-                <div className="max-w-md mx-auto space-y-6">
-                  <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center mx-auto">
-                    <CheckCircle2 className="w-10 h-10 text-white" />
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <h2 className="text-2xl font-bold text-gray-900">
+            <Card className="w-full max-w-6xl border-0 shadow-2xl bg-white/80 backdrop-blur-sm overflow-hidden">
+              <CardContent className="p-8">
+                <div className="space-y-8">
+                  {/* Header */}
+                  <div className="text-center space-y-4">
+                    <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center mx-auto">
+                      <CheckCircle2 className="w-10 h-10 text-white" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-gray-900">
                       {isStarted ? "Interview Completed!" : "Thank You!"}
                     </h2>
-                    <p className="text-gray-600 leading-relaxed">
+                    <p className="text-gray-600 leading-relaxed max-w-2xl mx-auto">
                       {isStarted 
-                        ? "Thank you for taking the time to participate in this AI-powered interview. Your responses have been recorded and will be reviewed by our team."
+                        ? "Thank you for taking the time to participate in this AI-powered interview. Here's your personalized analysis:"
                         : "Thank you very much for your interest. We appreciate your time."
                       }
                     </p>
                   </div>
+
+                  {/* Insights Section */}
+                  {isStarted && (
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-6 border border-blue-200">
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                          <Sparkles className="w-5 h-5 text-white" />
+                        </div>
+                        <h3 className="text-xl font-semibold text-gray-800">AI Analysis & Insights</h3>
+                      </div>
+                      
+                      {isGeneratingInsights ? (
+                        <div className="flex items-center justify-center py-8">
+                          <div className="flex items-center gap-3">
+                            <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent"></div>
+                            <span className="text-gray-600">Generating your personalized insights...</span>
+                          </div>
+                        </div>
+                      ) : insightsError ? (
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                          <div className="flex items-center gap-2 text-red-700">
+                            <XCircleIcon className="w-5 h-5" />
+                            <span className="font-medium">Unable to generate insights</span>
+                          </div>
+                          <p className="text-red-600 text-sm mt-1">{insightsError}</p>
+                        </div>
+                      ) : insights ? (
+                        <div className="space-y-6">
+                          {insights.map((insight: any, index: number) => (
+                            <div key={index} className="bg-white rounded-lg p-5 shadow-sm border border-blue-100">
+                              <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                  <span className="text-white text-sm font-medium">{index + 1}</span>
+                                </div>
+                                <div className="flex-1">
+                                  <h4 className="font-semibold text-gray-800 mb-2">{insight.title || `Insight ${index + 1}`}</h4>
+                                  <p className="text-gray-600 leading-relaxed">{insight.description || insight}</p>
+                                  {insight.score && (
+                                    <div className="mt-3 flex items-center gap-2">
+                                      <span className="text-sm text-gray-500">Score:</span>
+                                      <div className="flex items-center gap-1">
+                                        <div className="w-20 bg-gray-200 rounded-full h-2">
+                                          <div 
+                                            className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full"
+                                            style={{ width: `${Math.min(insight.score * 10, 100)}%` }}
+                                          ></div>
+                                        </div>
+                                        <span className="text-sm font-medium text-gray-700">{insight.score}/10</span>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8 text-gray-500">
+                          <Sparkles className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+                          <p>Your insights will appear here once generated...</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {!isFeedbackSubmitted && (
                     <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
