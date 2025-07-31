@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx prisma:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(node:*)",
+      "Bash(del check-interviewers.js)",
+      "Bash(del fix-interviewers.js)",
+      "Bash(rm:*)",
+      "Bash(curl:*)",
+      "Bash(find:*)",
+      "Bash(npm run lint)",
+      "Bash(npx tsc:*)",
+      "Bash(pkill:*)",
+      "Bash(taskkill:*)",
+      "Bash(start /b npm run dev)",
+      "Bash(del test-interviewers.js)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(grep:*)",
+      "Bash(git add:*)",
+      "Bash(ls:*)"
+    ],
+    "deny": []
+  }
+}
