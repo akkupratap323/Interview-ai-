@@ -13,8 +13,8 @@ const submitFeedback = async (feedbackData: FeedbackData) => {
     return data;
   } catch (error) {
     console.error("🎯 FeedbackService.submitFeedback - Error:", error);
-    console.error("🎯 FeedbackService.submitFeedback - Error message:", error?.message);
-    console.error("🎯 FeedbackService.submitFeedback - Error code:", error?.code);
+    console.error("🎯 FeedbackService.submitFeedback - Error message:", (error as any)?.message);
+    console.error("🎯 FeedbackService.submitFeedback - Error code:", (error as any)?.code);
     throw error;
   }
 };

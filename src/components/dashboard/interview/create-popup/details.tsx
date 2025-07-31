@@ -123,8 +123,8 @@ function DetailsPopup({
       });
 
       const data = {
-        name: name.trim(),
-        objective: objective.trim(),
+        name: name?.trim() || '',
+        objective: objective?.trim() || '',
         number: numQuestions,
         context: uploadedDocumentContext,
       };
@@ -148,8 +148,8 @@ function DetailsPopup({
 
       const updatedInterviewData = {
         ...interviewData,
-        name: name.trim(),
-        objective: objective.trim(),
+        name: name?.trim() || '',
+        objective: objective?.trim() || '',
         questions: updatedQuestions,
         interviewer_id: selectedInterviewer,
         question_count: Number(numQuestions),
@@ -183,8 +183,8 @@ function DetailsPopup({
 
       const updatedInterviewData = {
         ...interviewData,
-        name: name.trim(),
-        objective: objective.trim(),
+        name: name?.trim() || '',
+        objective: objective?.trim() || '',
         questions: [{ id: uuidv4(), question: "", follow_up_count: 1 }],
         interviewer_id: selectedInterviewer,
         question_count: Number(numQuestions),
@@ -267,7 +267,7 @@ function DetailsPopup({
                     id="interview-name"
                     type="text"
                     placeholder="e.g., Senior Software Engineer Interview"
-                    value={name}
+                    value={name || ''}
                     onChange={(e) => setName(e.target.value)}
                     onBlur={(e) => setName(e.target.value.trim())}
                     className="h-12 text-base border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
@@ -282,7 +282,7 @@ function DetailsPopup({
                   </Label>
                   <Textarea
                     id="objective"
-                    value={objective}
+                    value={objective || ''}
                     className="min-h-[120px] text-base border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
                     placeholder="e.g., Evaluate candidates' technical skills, problem-solving abilities, and cultural fit for our engineering team."
                     onChange={(e) => setObjective(e.target.value)}
@@ -487,7 +487,7 @@ function DetailsPopup({
                       min="1"
                       max="10"
                       placeholder="10"
-                      value={duration}
+                      value={duration || ''}
                       onChange={(e) => {
                         let value = e.target.value;
                         if (value === "" || (Number.isInteger(Number(value)) && Number(value) > 0)) {

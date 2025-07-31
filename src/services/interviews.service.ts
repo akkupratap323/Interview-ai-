@@ -30,10 +30,10 @@ const getAllInterviews = async (userId: string, organizationId: string) => {
     
   } catch (error) {
     console.error("❌❌❌ FATAL DATABASE ERROR ❌❌❌");
-    console.error("Error name:", error?.name);
-    console.error("Error message:", error?.message);
-    console.error("Error code:", error?.code);
-    console.error("Error stack:", error?.stack);
+    console.error("Error name:", (error as any)?.name);
+    console.error("Error message:", (error as any)?.message);
+    console.error("Error code:", (error as any)?.code);
+    console.error("Error stack:", (error as any)?.stack);
     console.error("Full error:", JSON.stringify(error, null, 2));
     
     // Try a simple count query to test connection
@@ -42,7 +42,7 @@ const getAllInterviews = async (userId: string, organizationId: string) => {
       const count = await db.interview.count();
       console.log("🚨 FALLBACK - Count succeeded:", count);
     } catch (countError) {
-      console.error("🚨 FALLBACK - Count failed:", countError?.message);
+      console.error("🚨 FALLBACK - Count failed:", (countError as any)?.message);
     }
     
     return [];

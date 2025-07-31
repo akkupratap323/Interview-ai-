@@ -11,7 +11,7 @@ import {
   CheckCircle2,
   MessageSquare
 } from "lucide-react";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -150,10 +150,10 @@ function Call({ interview }: InterviewProps) {
     }
 
     return () => clearInterval(intervalId);
-  }, [isCalling, time, currentTimeDuration]);
+  }, [isCalling, time, currentTimeDuration, interviewTimeDuration]);
 
   // Function to generate insights after interview completion
-  const generateInsights = async () => {
+  const generateInsights = useCallback(async () => {
     console.log("🧠 Generating insights for interview:", interview.id);
     setIsGeneratingInsights(true);
     setInsightsError(null);
@@ -183,11 +183,11 @@ function Call({ interview }: InterviewProps) {
       }
     } catch (error) {
       console.error("🧠 Error generating insights:", error);
-      setInsightsError(error.message || "Failed to generate insights");
+      setInsightsError((error as any).message || "Failed to generate insights");
     } finally {
       setIsGeneratingInsights(false);
     }
-  };
+  }, [interview.id]);
 
   // Generate insights when interview ends
   useEffect(() => {
@@ -198,7 +198,7 @@ function Call({ interview }: InterviewProps) {
         generateInsights();
       }, 2000);
     }
-  }, [isEnded, isStarted, insights, isGeneratingInsights]);
+  }, [isEnded, isStarted, insights, isGeneratingInsights, generateInsights]);
 
   useEffect(() => {
     if (testEmail(email)) {
@@ -424,7 +424,7 @@ function Call({ interview }: InterviewProps) {
 
       updateInterview();
     }
-  }, [isEnded, callId, tabSwitchCount]);
+  }, [isEnded, callId, tabSwitchCount, interview.id]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);

@@ -80,7 +80,7 @@ function InterviewInterface({ params }: Props) {
         if (response) {
           console.log("✅ Interview Page - Found via context:", response.name);
           setInterview(response);
-          document.title = response.name;
+          document.title = response.name || 'Interview';
           return;
         }
         
@@ -93,7 +93,7 @@ function InterviewInterface({ params }: Props) {
         if (directResponse) {
           console.log("✅ Interview Page - Found via direct service:", directResponse.name);
           setInterview(directResponse);
-          document.title = directResponse.name;
+          document.title = directResponse.name || 'Interview';
           return;
         }
         
@@ -106,7 +106,7 @@ function InterviewInterface({ params }: Props) {
         if (apiData.success && apiData.interview) {
           console.log("✅ Interview Page - Found via API:", apiData.interview.name);
           setInterview(apiData.interview);
-          document.title = apiData.interview.name;
+          document.title = apiData.interview.name || 'Interview';
           return;
         }
         

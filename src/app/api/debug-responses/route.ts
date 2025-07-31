@@ -24,8 +24,8 @@ export async function GET(request: Request) {
       is_analysed: response.is_analysed,
       has_analytics: !!response.analytics,
       analytics_preview: response.analytics ? {
-        overallScore: response.analytics?.overallScore,
-        communication: response.analytics?.communication?.score,
+        overallScore: (response.analytics as any)?.overallScore,
+        communication: (response.analytics as any)?.communication?.score,
       } : null,
       created_at: response.created_at
     }));
@@ -40,7 +40,7 @@ export async function GET(request: Request) {
     console.error("🔍 DEBUG RESPONSES - Error:", error);
     return NextResponse.json({
       success: false,
-      error: error?.message || "Unknown error"
+      error: (error as any)?.message || "Unknown error"
     }, { status: 500 });
   }
 }

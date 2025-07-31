@@ -90,8 +90,8 @@ export function InterviewProvider({ children }: InterviewProviderProps) {
           respondents: interview.respondents || [],
           theme_color: interview.theme_color || "",
           logo_url: interview.logo_url || "",
-          created_at: interview.createdAt || new Date(),
-          updated_at: interview.updatedAt || new Date(),
+          createdAt: interview.createdAt || new Date(),
+          updatedAt: interview.updatedAt || new Date(),
         }));
         
         console.log("🎯 FETCHINTERVIEWS - SUCCESS! Setting", mappedInterviews.length, "interviews");
@@ -110,7 +110,7 @@ export function InterviewProvider({ children }: InterviewProviderProps) {
       if (apiData.success && apiData.interviews && apiData.interviews.length > 0) {
         console.log("🎯 FETCHINTERVIEWS - API worked! Using API data...");
         
-        const mappedFromAPI = apiData.interviews.map((interview, index) => ({
+        const mappedFromAPI = apiData.interviews.map((interview: any, index: number) => ({
           id: interview.id,
           name: interview.name || `Interview ${index + 1}`,
           user_id: interview.user_id || "",
@@ -146,7 +146,7 @@ export function InterviewProvider({ children }: InterviewProviderProps) {
       
     } catch (error) {
       console.error("🎯 FETCHINTERVIEWS - FATAL ERROR:", error);
-      console.error("🎯 FETCHINTERVIEWS - Error details:", error?.message);
+      console.error("🎯 FETCHINTERVIEWS - Error details:", (error as any)?.message);
       setInterviews([]);
     } finally {
       setInterviewsLoading(false);

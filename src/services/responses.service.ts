@@ -60,8 +60,8 @@ const createResponse = async (payload: any) => {
     return data.id;
   } catch (error) {
     console.error("❌ ResponseService.createResponse - ERROR:", error);
-    console.error("❌ ResponseService.createResponse - Error message:", error?.message);
-    console.error("❌ ResponseService.createResponse - Error code:", error?.code);
+    console.error("❌ ResponseService.createResponse - Error message:", (error as any)?.message);
+    console.error("❌ ResponseService.createResponse - Error code:", (error as any)?.code);
     return null;
   }
 };
@@ -201,7 +201,7 @@ const getResponseByCallId = async (id: string) => {
     };
   } catch (error) {
     console.error("🔍 ResponseService.getResponseByCallId - ERROR:", error);
-    console.error("🔍 ResponseService.getResponseByCallId - Error message:", error?.message);
+    console.error("🔍 ResponseService.getResponseByCallId - Error message:", (error as any)?.message);
     return null;
   }
 };

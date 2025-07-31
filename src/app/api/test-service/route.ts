@@ -55,7 +55,7 @@ export async function GET() {
           connection: !!connectionTest,
           count: count,
           directFetch: interviews.length,
-          serviceError: serviceError?.message
+          serviceError: (serviceError as any)?.message
         },
         interviews: interviews
       });
@@ -65,8 +65,8 @@ export async function GET() {
     console.error("🧪 TEST API - Fatal error:", error);
     return NextResponse.json({
       success: false,
-      error: error?.message || "Unknown error",
-      stack: error?.stack
+      error: (error as any)?.message || "Unknown error",
+      stack: (error as any)?.stack
     }, { status: 500 });
   }
 }

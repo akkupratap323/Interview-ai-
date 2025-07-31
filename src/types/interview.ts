@@ -11,30 +11,31 @@ export interface Quote {
 
 export interface InterviewBase {
   user_id: string;
-  organization_id: string;
-  name: string;
-  interviewer_id: string;
-  objective: string;
+  organization_id: string | null;
+  name: string | null;
+  interviewer_id: string | null;
+  objective: string | null;
   question_count: number;
-  time_duration: string;
+  time_duration: string | null;
   is_anonymous: boolean;
-  questions: Question[];
-  description: string;
+  questions: any;
+  description: string | null;
   response_count: number;
 }
 
 export interface InterviewDetails {
   id: string;
-  created_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
   url: string | null;
-  insights: string[];
-  quotes: Quote[];
+  insights: any;
+  quotes: any;
   details: any;
   is_active: boolean;
-  theme_color: string;
-  logo_url: string;
-  respondents: string[];
-  readable_slug: string;
+  theme_color: string | null;
+  logo_url: string | null;
+  respondents: any;
+  readable_slug: string | null;
 }
 
 export interface Interview extends InterviewBase, InterviewDetails {}

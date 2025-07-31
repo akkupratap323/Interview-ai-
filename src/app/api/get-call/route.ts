@@ -99,7 +99,7 @@ export async function POST(req: Request, res: Response) {
     );
 
   } catch (error) {
-    logger.error("get-call - Error processing request:", error);
+    logger.error("get-call - Error processing request:", error as any);
     return NextResponse.json(
       { 
         error: "Internal server error",

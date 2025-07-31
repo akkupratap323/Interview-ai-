@@ -27,8 +27,8 @@ export async function POST(request: NextRequest) {
     console.error("🧪 TEST CREATE RESPONSE - Error:", error);
     return NextResponse.json({
       success: false,
-      error: error?.message || "Unknown error",
-      stack: error?.stack
+      error: (error as any)?.message || "Unknown error",
+      stack: (error as any)?.stack
     }, { status: 500 });
   }
 }

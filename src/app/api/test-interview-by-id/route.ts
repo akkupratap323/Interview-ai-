@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     console.error("🧪 TEST BY ID API - Error:", error);
     return NextResponse.json({
       success: false,
-      error: error?.message || "Unknown error"
+      error: (error as any)?.message || "Unknown error"
     }, { status: 500 });
   }
 }

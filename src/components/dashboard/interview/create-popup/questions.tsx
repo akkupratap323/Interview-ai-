@@ -26,7 +26,7 @@ function QuestionsPopup({ interviewData, setProceed, setOpen }: Props) {
     interviewData.questions,
   );
   const [description, setDescription] = useState<string>(
-    interviewData.description.trim(),
+    interviewData.description?.trim() || '',
   );
   const { fetchInterviews } = useInterviews();
 
