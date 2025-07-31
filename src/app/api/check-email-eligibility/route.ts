@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
     const oldUserEmails: string[] = (
       await ResponseService.getAllEmails(interviewId)
-    ).map((item: any) => item.email || '').filter(email => email !== '');
+    ).map((item: any) => item.email || '').filter((email: string) => email !== '');
 
     console.log("🔍 Found existing emails:", oldUserEmails.length);
 
