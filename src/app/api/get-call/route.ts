@@ -5,6 +5,9 @@ import { Response } from "@/types/response";
 import { NextResponse } from "next/server";
 import Retell from "retell-sdk";
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 const retell = new Retell({
   apiKey: process.env.RETELL_API_KEY || "",
 });

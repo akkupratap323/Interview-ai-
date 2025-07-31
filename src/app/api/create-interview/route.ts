@@ -8,6 +8,8 @@ import { db } from "@/lib/db";
 import { PrismaClient } from "@prisma/client";
 
 export const maxDuration = 60;
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 const base_url = process.env.NEXT_PUBLIC_LIVE_URL;
 
