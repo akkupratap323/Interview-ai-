@@ -4,7 +4,6 @@ import { useInterviews } from "@/contexts/interviews.context";
 import { useEffect, useState } from "react";
 import Call from "@/components/call";
 import Image from "next/image";
-import { ArrowUpRightSquareIcon } from "lucide-react";
 import { Interview } from "@/types/interview";
 import LoaderWithText from "@/components/loaders/loader-with-text/loaderWithText";
 
@@ -22,60 +21,36 @@ type PopupProps = {
 
 function PopupLoader() {
   return (
-    <div className="bg-white rounded-md absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 md:w-[80%] w-[90%]">
-      <div className="h-[88vh] justify-center items-center rounded-lg border-2 border-b-4 border-r-4 border-black font-bold transition-all md:block dark:border-white">
-        <div className="relative flex flex-col items-center justify-center h-full">
-          <LoaderWithText />
-        </div>
+    <div className="bg-white rounded-lg max-w-md mx-auto p-6 border border-gray-200">
+      <div className="flex flex-col items-center justify-center space-y-4">
+        <LoaderWithText />
       </div>
-      <a
-        className="flex flex-row justify-center align-middle mt-3"
-        href="https://Interview-up.co/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <div className="text-center text-md font-semibold mr-2">
-          Powered by{" "}
-          <span className="font-bold">
-            Interview<span className="text-indigo-600">Up</span>
-          </span>
-        </div>
-        <ArrowUpRightSquareIcon className="h-[1.5rem] w-[1.5rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-indigo-500" />
-      </a>
+      <div className="text-center mt-4">
+        <span className="text-xs text-gray-500">Powered by InterviewUp</span>
+      </div>
     </div>
   );
 }
 
 function PopUpMessage({ title, description, image }: PopupProps) {
   return (
-    <div className="bg-white rounded-md absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 md:w-[80%] w-[90%]">
-      <div className="h-[88vh] content-center rounded-lg border-2 border-b-4 border-r-4 border-black font-bold transition-all  md:block dark:border-white ">
-        <div className="flex flex-col items-center justify-center my-auto">
-          <Image
-            src={image}
-            alt="Graphic"
-            width={200}
-            height={200}
-            className="mb-4"
-          />
-          <h1 className="text-md font-medium mb-2">{title}</h1>
-          <p>{description}</p>
+    <div className="bg-white rounded-lg max-w-md mx-auto p-6 border border-gray-200">
+      <div className="text-center space-y-4">
+        <Image
+          src={image}
+          alt="Graphic"
+          width={120}
+          height={120}
+          className="mx-auto"
+        />
+        <div>
+          <h1 className="text-lg font-medium mb-2">{title}</h1>
+          <p className="text-gray-600 text-sm">{description}</p>
         </div>
       </div>
-      <a
-        className="flex flex-row justify-center align-middle mt-3"
-        href="https://Interview-up.co/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <div className="text-center text-md font-semibold mr-2">
-          Powered by{" "}
-          <span className="font-bold">
-            Interview<span className="text-indigo-600">Up</span>
-          </span>
-        </div>
-        <ArrowUpRightSquareIcon className="h-[1.5rem] w-[1.5rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-indigo-500" />
-      </a>
+      <div className="text-center mt-4">
+        <span className="text-xs text-gray-500">Powered by InterviewUp</span>
+      </div>
     </div>
   );
 }
@@ -149,47 +124,28 @@ function InterviewInterface({ params }: Props) {
   }, []);
 
   return (
-    <div>
-      <div className="hidden md:block p-8 mx-auto form-container">
-        {!interview ? (
-          interviewNotFound ? (
+    <div className="min-h-screen bg-white">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="flex items-center justify-center min-h-[80vh]">
+          {!interview ? (
+            interviewNotFound ? (
+              <PopUpMessage
+                title="Invalid URL"
+                description="The interview link you're trying to access is invalid. Please check the URL and try again."
+                image="/invalid-url.png"
+              />
+            ) : (
+              <PopupLoader />
+            )
+          ) : !isActive ? (
             <PopUpMessage
-              title="Invalid URL"
-              description="The interview link you're trying to access is invalid. Please check the URL and try again."
-              image="/invalid-url.png"
+              title="Interview Unavailable"
+              description="We are not currently accepting responses. Please contact the sender for more information."
+              image="/closed.png"
             />
           ) : (
-            <PopupLoader />
-          )
-        ) : !isActive ? (
-          <PopUpMessage
-            title="Interview Is Unavailable"
-            description="We are not currently accepting responses. Please contact the sender for more information."
-            image="/closed.png"
-          />
-        ) : (
-          <Call interview={interview} />
-        )}
-      </div>
-      <div className=" md:hidden flex flex-col items-center md:h-[0px] justify-center  my-auto">
-        <div className="mt-48 px-3">
-          <p className="text-center my-5 text-md font-semibold">
-            {interview?.name}
-          </p>
-          <p className="text-center text-gray-600 my-5">
-            Please use a PC to respond to the interview. Apologies for any
-            inconvenience caused.{" "}
-          </p>
-        </div>
-        <div className="text-center text-md font-semibold mr-2 my-5">
-          Powered by{" "}
-          <a
-            className="font-bold underline"
-            href="www.Interview-up.co"
-            target="_blank"
-          >
-            Interview<span className="text-indigo-600">Up</span>
-          </a>
+            <Call interview={interview} />
+          )}
         </div>
       </div>
     </div>
